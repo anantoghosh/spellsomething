@@ -20,32 +20,38 @@ BasicGame.Game.prototype = {
 
   create: function () {
 
-    //health
-    this.health = 3;
+    this.setUpGame();
 
+    //hitTokens
     this.hitBoxGroup = this.add.group();
 
+    //Colliding Side Walls
     this.wallgroup = this.add.group();
-    var wall_left = this.add.sprite(-1,-64);
-    wall_left.height = this.world.height + 64;
-    wall_left.width = 1;
+    this.wallgroup.add(this.createWall(-1, -64));
+    this.wallgroup.add(this.createWall(this.world.width, -64));
 
-    this.physics.enable(wall_left, Phaser.Physics.ARCADE);
-    wall_left.body.immovable = true;
-    wall_left.renderable = false;
+    this.updateStage();
 
-    this.wallgroup.add(wall_left);
+    //Button ui
+    this.bar = this.add.sprite(0, 0, "button");
+    this.bar.width = this.world.width;
+    this.bar.height = 64;
+    this.bar.tint = 0xededed;
+    this.bar.y = this.world.height - this.bar.height;
 
-    var wall_right = this.add.sprite(this.world.width,-64);
-    wall_right.height = this.world.height + 64;
-    wall_right.width = 1;
+    this.barText = this.game.add.text(10, this.world.height - 32,'', {fill: '#222222'});
 
-    this.physics.enable(wall_right, Phaser.Physics.ARCADE);
-    wall_right.body.immovable = true;
-    wall_right.renderable = false;
+    // Show FPS
+    this.game.time.advancedTiming = true;
+    this.fpsText = this.game.add.text(
+        10, 10, '', { fontSize: '20px', fill: '#ffffff' }
+    );
 
-    this.wallgroup.add(wall_right);
 
+    this.game.time.events.loop(Phaser.Timer.SECOND/2, this.createHitBox, this);
+  },
+
+  setUpGame: function () {
     this.sprite_map = {
       "zero": [0],
       "one": [1],
@@ -83,7 +89,7 @@ BasicGame.Game.prototype = {
 
     this.answer_map = {
       "stage1": {
-        "tokens": [["one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one", "one"], ["blue", "blue", "blue"]],
+        "tokens": [["one", "one", "one", "one"], ["blue", "blue", "blue"]],
       },
       "stage2": {
         "tokens": [["red", "red", "red", "red"], ["one", "two", "three"]],
@@ -92,25 +98,7 @@ BasicGame.Game.prototype = {
 
     this.currentStage = "stage1";
     this.subStage = 0;
-
-    this.updateStage();
-    //Button ui
-    this.bar = this.add.sprite(0, 0, "button");
-    this.bar.width = this.world.width;
-    this.bar.height = 64;
-    this.bar.tint = 0xededed;
-    this.bar.y = this.world.height - this.bar.height;
-
-    this.barText = this.game.add.text(10, this.world.height - 32,'', {fill: '#222222'});
-
-    // Show FPS
-    this.game.time.advancedTiming = true;
-    this.fpsText = this.game.add.text(
-        10, 10, '', { fontSize: '20px', fill: '#ffffff' }
-    );
-
-
-    this.game.time.events.loop(Phaser.Timer.SECOND/3, this.createHitBox, this);
+    this.health = 3;
   },
 
   updateStage: function () {
@@ -118,10 +106,19 @@ BasicGame.Game.prototype = {
     console.log(this.answer);
   },
 
+  createWall: function (x, y) {
+    var wall = this.add.sprite(x, y);
+    wall.height = this.world.height - (y);
+    wall.width = 1;
+    this.physics.enable(wall, Phaser.Physics.ARCADE);
+    wall.body.immovable = true;
+    wall.renderable = false;
+    return wall;
+  },
+
+
+
   createHitBox: function () {
-//    var json = JSON.parse(this.answer_map);
-//    var value = this.game.rnd.integerInRange(0, 10);
-//    var value = this.answser_map[0][this.game.rnd.integerInRange(0, 0)];
     var probability = Math.floor(Math.random()*11);
     if (probability < 2 && this.answer.length != 0) {
       var token_map = this.answer[0];
@@ -154,8 +151,8 @@ BasicGame.Game.prototype = {
     this.physics.enable(hit, Phaser.Physics.ARCADE);
     hit.body.velocity.x = this.rnd.integerInRange(-250, 250);
     hit.body.angularVelocity = this.rnd.integerInRange(-360, 360);
-    hit.body.setSize(28, 28);
-    hit.body.velocity.y = 300;
+    hit.body.setSize(32, 32);
+    hit.body.velocity.y = 200;
     hit.scale.setTo(2,2);
     hit.anchor.setTo(0.5, 0.5);
     hit.body.bounce.set(0.9);
@@ -171,6 +168,15 @@ BasicGame.Game.prototype = {
     if(found != -1) {
       this.answer.splice(found, 1);
       item.destroy();
+      if (this.answer.length === 0) {
+        if (this.subStage == this.answer_map[this.currentStage]["tokens"].length - 1) {
+          this.subStage = 0;
+        }
+        else {
+          this.subStage++;
+        }
+        this.updateStage();
+      }
     }
     else {
       this.health--;
