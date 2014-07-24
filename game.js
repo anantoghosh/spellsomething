@@ -125,14 +125,15 @@ BasicGame.Game.prototype = {
   },
 
   createHitBox: function () {
+    var token_map;
     var probability = Math.floor(Math.random()*11);
-    if (probability < 2 && this.answer.length != 0) {
-      var token_map = this.answer[0];
+    if (probability < 2 && this.answer.length !== 0) {
+      token_map = this.answer[0];
 //      console.log("Boosted:" + token_map);
     }
     else {
       var tokens = this.stages[this.currentStage]["tokens"][this.subStage];
-      var token_map = this.token_group_map[tokens][this.rnd.integerInRange(0,this.token_group_map[tokens].length-1)];
+      token_map = this.token_group_map[tokens][this.rnd.integerInRange(0,this.token_group_map[tokens].length-1)];
 //      console.log("Normal:" + token_map);
     }
 
