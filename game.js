@@ -14,10 +14,7 @@ HitBox.prototype.constructor = HitBox;
 BasicGame.Game.prototype = {
 
   preload: function() {
-    this.load.spritesheet('blue', 'assets/blue.png', 32, 32);
-    this.load.image('button', 'assets/grey_button02.png');
-    this.load.audio('pop', ['sounds/pop.mp3']);
-    this.load.audio('music', 'sounds/Ambler.mp3');
+
   },
 
   create: function () {

@@ -4,7 +4,7 @@ BasicGame.Preloader = function (game) {
   this.background = null;
   this.preloadBar = null;
 
-  //this.ready = false;
+  this.ready = false;
 
 };
 
@@ -15,8 +15,10 @@ BasicGame.Preloader.prototype = {
     //  Show the loading progress bar asset we loaded in boot.js
     this.stage.backgroundColor = '#2d2d2d';
 
-    this.preloadBar = this.add.sprite(412, 400, 'preloaderBar');
-    this.add.text(510, 360, "Loading...", { font: "32px monospace", fill: "#fff" }).anchor.setTo(0.5, 0.5);
+    this.preloadBar = this.add.sprite(0, this.world.centerY, 'preloaderBar');
+    this.preloadBar.x = this.world.centerX - this.preloadBar.width/2;
+
+    this.add.text(this.world.centerX, this.world.centerY - 20, "Loading...", { fill: "#fff" }).anchor.setTo(0.5, 0.5);
 
     //  This sets the preloadBar sprite as a loader sprite.
     //  What that does is automatically crop the sprite from 0 to full-width
@@ -24,21 +26,10 @@ BasicGame.Preloader.prototype = {
     this.load.setPreloadSprite(this.preloadBar);
 
     //  Here we load the rest of the assets our game needs.
-    this.load.image('titlepage', 'assets/titlepage.png');
-    this.load.image('sea', 'assets/sea.png');
-    this.load.image('bullet', 'assets/bullet.png');
-    this.load.image('enemyBullet', 'assets/enemy-bullet.png');
-    this.load.image('powerup1', 'assets/powerup1.png');
-    this.load.spritesheet('greenEnemy', 'assets/enemy.png', 32, 32);
-    this.load.spritesheet('whiteEnemy', 'assets/shooting-enemy.png', 32, 32);
-    this.load.spritesheet('boss', 'assets/boss.png', 93, 75);
-    this.load.spritesheet('explosion', 'assets/explosion.png', 32, 32);
-    this.load.spritesheet('player', 'assets/player.png', 64, 64);
-    this.load.audio('explosion', ['assets/explosion.wav']);
-    this.load.audio('playerExplosion', ['assets/player-explosion.wav']);
-    this.load.audio('enemyFire', ['assets/enemy-fire.wav']);
-    this.load.audio('playerFire', ['assets/player-fire.wav']);
-    this.load.audio('powerUp', ['assets/powerup.wav']);
+    this.load.spritesheet('blue', 'assets/blue.png', 32, 32);
+    this.load.image('button', 'assets/grey_button02.png');
+    this.load.audio('pop', ['sounds/pop.ogg', 'sounds/pop.wav']);
+    this.load.audio('music', ['sounds/Ambler.ogg', 'sounds/Ambler.wav']);
     //this.load.audio('titleMusic', ['audio/main_menu.mp3']);
     //  + lots of other required assets here
 
@@ -62,11 +53,11 @@ BasicGame.Preloader.prototype = {
     //  If you don't have any music in your game then put the game.state.start line into the create function and delete
     //  the update function completely.
 
-    //if (this.cache.isSoundDecoded('titleMusic') && this.ready == false)
-    //{
-    //  this.ready = true;
-      this.state.start('MainMenu');
-    //}
+    if (this.cache.isSoundDecoded('music') && this.ready == false)
+    {
+      this.ready = true;
+      this.state.start('Game');
+    }
 
   }
 
