@@ -20,6 +20,9 @@ BasicGame.Game.prototype = {
   create: function () {
 
     this.setUpGame();
+    this.backdrop = this.add.sprite(0,0,"backdrop");
+    this.backdrop.width = this.world.width;
+    this.backdrop.height = this.world.height;
 
     //hitTokens
     this.hitBoxGroup = this.add.group();
