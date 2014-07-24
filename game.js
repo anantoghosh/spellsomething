@@ -4,7 +4,7 @@ BasicGame.Game = function (game) {
 };
 
 HitBox = function (game, frame, value) {
-  Phaser.Sprite.call(this, game, game.rnd.integerInRange(32, game.width-32), game.rnd.integerInRange(game.world.height + 32,game.world.height + 64), 'blue', frame);
+  Phaser.Sprite.call(this, game, 32, game.rnd.integerInRange(game.world.height + 32,game.world.height + 64), 'blue', frame);
   this.value = value;
 };
 
@@ -144,7 +144,7 @@ BasicGame.Game.prototype = {
 //      console.log("Reused: " + hit);
     }
 
-    hit.reset(this.rnd.integerInRange(32, this.world.width-32), this.rnd.integerInRange(this.world.height + 32,this.world.height + 64));
+    hit.reset(32, this.rnd.integerInRange(this.world.height + 32,this.world.height + 64));
     hit.frame = frame;
     hit.value = token_map;
 
@@ -155,7 +155,7 @@ BasicGame.Game.prototype = {
     hit.body.velocity.x = this.rnd.integerInRange(-250, 250);
     hit.body.angularVelocity = this.rnd.integerInRange(-360, 360);
     hit.body.setSize(32, 32);
-    hit.body.velocity.y = -200;
+    hit.body.velocity.y = this.rnd.integerInRange(-200, -100);
     hit.scale.setTo(2,2);
     hit.anchor.setTo(0.5, 0.5);
     hit.body.bounce.set(0.9);
