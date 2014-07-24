@@ -16,6 +16,8 @@ BasicGame.Game.prototype = {
   preload: function() {
     this.load.spritesheet('blue', 'assets/blue.png', 32, 32);
     this.load.image('button', 'assets/grey_button02.png');
+    this.load.audio('pop', ['sounds/pop.mp3']);
+    this.load.audio('music', 'sounds/Ambler.mp3');
   },
 
   create: function () {
@@ -31,6 +33,11 @@ BasicGame.Game.prototype = {
     this.wallgroup.add(this.createWall(this.world.width, -64));
 
     this.updateStage();
+
+    this.popSound = this.add.audio('pop');
+    this.music = this.add.audio('music');
+    this.music.loop = true;
+    this.music.play();
 
     //Button ui
     this.bar = this.add.sprite(0, 0, "button");
@@ -92,7 +99,7 @@ BasicGame.Game.prototype = {
         "tokens": [["one", "one", "one", "one"], ["blue", "blue", "blue"]],
       },
       "stage2": {
-        "tokens": [["red", "red", "red", "red"], ["one", "two", "three"]],
+        "tokens": [["red", "red", "red", "red"], ["five", "five", "five"]],
       },
     };
 
@@ -104,7 +111,7 @@ BasicGame.Game.prototype = {
   updateStage: function () {
 //    console.log(this.currentStage, this.subStage);
     this.answer = this.answer_map[this.currentStage]["tokens"][this.subStage].slice();
-//    console.log(this.answer);
+    console.log(+ this.currentStage.match(/\d+/g)[0]);
   },
 
   createWall: function (x, y) {
@@ -166,11 +173,19 @@ BasicGame.Game.prototype = {
     var found = this.answer.indexOf(item.value);
     if(found != -1) {
       this.answer.splice(found, 1);
-      item.destroy();
+      item.kill();
+      this.popSound.play();
       if (this.answer.length === 0) {
         console.log(this.answer_map[this.currentStage]["tokens"].length);
         if (this.subStage == this.answer_map[this.currentStage]["tokens"].length - 1) {
           this.subStage = 0;
+          var thisStage = + this.currentStage.match(/\d+/g)[0];
+          thisStage++;
+          //templogic back to stage 1
+          if (thisStage == 3) thisStage = 1;
+
+          this.currentStage = "stage" + thisStage;
+          console.log(this.currentStage);
         }
         else {
           this.subStage++;
