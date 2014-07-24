@@ -4,7 +4,7 @@ BasicGame.Game = function (game) {
 };
 
 HitBox = function (game, frame, value) {
-  Phaser.Sprite.call(this, game, game.rnd.integerInRange(32, game.width-32), game.rnd.integerInRange(-64,-32), 'blue', frame);
+  Phaser.Sprite.call(this, game, game.rnd.integerInRange(32, game.width-32), game.rnd.integerInRange(game.world.height + 32,game.world.height + 64), 'blue', frame);
   this.value = value;
 };
 
@@ -26,8 +26,8 @@ BasicGame.Game.prototype = {
 
     //Colliding Side Walls
     this.wallgroup = this.add.group();
-    this.wallgroup.add(this.createWall(-1, -64));
-    this.wallgroup.add(this.createWall(this.world.width, -64));
+    this.wallgroup.add(this.createWall(-1, 0));
+    this.wallgroup.add(this.createWall(this.world.width, 0));
 
     this.updateStage();
 
@@ -113,7 +113,7 @@ BasicGame.Game.prototype = {
 
   createWall: function (x, y) {
     var wall = this.add.sprite(x, y);
-    wall.height = this.world.height - (y);
+    wall.height = this.world.height + 64;
     wall.width = 1;
     this.physics.enable(wall, Phaser.Physics.ARCADE);
     wall.body.immovable = true;
@@ -144,7 +144,7 @@ BasicGame.Game.prototype = {
 //      console.log("Reused: " + hit);
     }
 
-    hit.reset(this.rnd.integerInRange(32, this.world.width-32), -32);
+    hit.reset(this.rnd.integerInRange(32, this.world.width-32), this.rnd.integerInRange(this.world.height + 32,this.world.height + 64));
     hit.frame = frame;
     hit.value = token_map;
 
@@ -155,7 +155,7 @@ BasicGame.Game.prototype = {
     hit.body.velocity.x = this.rnd.integerInRange(-250, 250);
     hit.body.angularVelocity = this.rnd.integerInRange(-360, 360);
     hit.body.setSize(32, 32);
-    hit.body.velocity.y = 200;
+    hit.body.velocity.y = -200;
     hit.scale.setTo(2,2);
     hit.anchor.setTo(0.5, 0.5);
     hit.body.bounce.set(0.9);
