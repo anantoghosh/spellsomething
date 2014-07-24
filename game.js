@@ -102,8 +102,9 @@ BasicGame.Game.prototype = {
   },
 
   updateStage: function () {
-    this.answer = this.answer_map[this.currentStage]["tokens"][this.subStage];
-    console.log(this.answer);
+//    console.log(this.currentStage, this.subStage);
+    this.answer = this.answer_map[this.currentStage]["tokens"][this.subStage].slice();
+//    console.log(this.answer);
   },
 
   createWall: function (x, y) {
@@ -116,18 +117,16 @@ BasicGame.Game.prototype = {
     return wall;
   },
 
-
-
   createHitBox: function () {
     var probability = Math.floor(Math.random()*11);
     if (probability < 2 && this.answer.length != 0) {
       var token_map = this.answer[0];
-      console.log("Boosted:" + token_map);
+//      console.log("Boosted:" + token_map);
     }
     else {
       var tokens = this.stages[this.currentStage]["tokens"][this.subStage];
       var token_map = this.token_group_map[tokens][this.rnd.integerInRange(0,this.token_group_map[tokens].length-1)];
-      console.log("Normal:" + token_map);
+//      console.log("Normal:" + token_map);
     }
 
     var frame = this.sprite_map[token_map][this.rnd.integerInRange(0,this.sprite_map[token_map].length-1)];
@@ -135,10 +134,10 @@ BasicGame.Game.prototype = {
 
     if(!hit) {
         hit = new HitBox(this.game, frame, token_map);
-        console.log("New" + hit);
+//        console.log("New" + hit);
     }
     else {
-      console.log("Reused: " + hit);
+//      console.log("Reused: " + hit);
     }
 
     hit.reset(this.rnd.integerInRange(32, this.world.width-32), -32);
@@ -169,6 +168,7 @@ BasicGame.Game.prototype = {
       this.answer.splice(found, 1);
       item.destroy();
       if (this.answer.length === 0) {
+        console.log(this.answer_map[this.currentStage]["tokens"].length);
         if (this.subStage == this.answer_map[this.currentStage]["tokens"].length - 1) {
           this.subStage = 0;
         }
