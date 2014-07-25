@@ -7,11 +7,31 @@ BasicGame.Game = function (game) {
 Hit Box Class
 */
 HitBox = function (game, frame, value) {
-  Phaser.Sprite.call(this, game, 0, 0, 'blue', frame);
-  this.value = value;
+  Phaser.Sprite.call(this, game, 0, 0);
+  var bubble = game.add.sprite(0, 0, "bubble");
+  bubble.anchor.setTo(0.5, 0.5);
+  bubble.tint = 0x69b9fc;
+  bubble.alpha = 0.5;
+
+  this.number = game.add.sprite(0, 0,'blue', frame);
+  this.number.anchor.setTo(0.5, 0.5);
+  this.number.scale.setTo(0.7,0.7);
+
+  this.addChild(bubble);
+  this.addChild(this.number);
+//  this.createContainer(game);
 };
 
 HitBox.prototype = Object.create(Phaser.Sprite.prototype);
+//HitBox.prototype.update = function(game) {
+//    this.bubble.x = this.x;
+//    this.bubble.y = this.y;
+//  };
+//HitBox.prototype.createContainer = function(game) {
+//  this.bubble = game.add.sprite(this.x, this.y, 'blue', 15);
+////  this.bubble.anchor.setTo(0.5,0.5);
+//  this.bubble.z = -100;
+//};
 HitBox.prototype.constructor = HitBox;
 /**/
 
@@ -49,30 +69,30 @@ BasicGame.Game.prototype = {
 //    this.input.onDown.add(this.particleBurst, this);
 
     //Temp nested group get alive test
-    this.first = this.add.group();
-    this.second = this.add.group();
-    this.third = this.add.group();
-    var one = this.add.sprite(20, 100, 'blue', 15);
-    one.name = "one";
-    var two = this.add.sprite(52, 100, 'blue', 14);
-    two.name = "two";
-    var three = this.add.sprite(84, 100, 'blue', 13);
-    three.name = "three";
-
-    var four = this.add.sprite(116, 100, 'blue', 12);
-    four.name = "four";
-    this.second.add(one);
-    this.second.name = "second g";
-    this.second.add(two);
-    this.third.add(three);
-    this.third.name = "third g";
-    this.third.add(four);
-    this.first.add(this.third);
-    this.first.add(this.second);
-    this.third.children[0].kill();
-    this.third.children[1].kill();
-    console.log(this.third.getFirstExists(false));
-    console.log(this.first.getFirstExists(false));
+//    this.first = this.add.group();
+//    this.second = this.add.group();
+//    this.third = this.add.group();
+//    var one = this.add.sprite(20, 100, 'blue', 15);
+//    one.name = "one";
+//    var two = this.add.sprite(52, 100, 'blue', 14);
+//    two.name = "two";
+//    var three = this.add.sprite(84, 100, 'blue', 13);
+//    three.name = "three";
+//
+//    var four = this.add.sprite(116, 100, 'blue', 12);
+//    four.name = "four";
+//    this.second.add(one);
+//    this.second.name = "second g";
+//    this.second.add(two);
+//    this.third.add(three);
+//    this.third.name = "third g";
+//    this.third.add(four);
+//    this.first.add(this.third);
+//    this.first.add(this.second);
+//    this.third.children[0].kill();
+//    this.third.children[1].kill();
+//    console.log(this.third.getFirstExists(false));
+//    console.log(this.first.getFirstExists(false));
     /**/
     //hitTokens
     this.hitBoxGroup = this.add.group();
@@ -211,9 +231,10 @@ BasicGame.Game.prototype = {
     }
 
     hit.reset(32, this.rnd.integerInRange(this.world.height + 32,this.world.height + 64));
-    hit.frame = frame;
+//    hit.frame = frame;
     hit.value = token_map;
 
+    hit.number.frame = frame;
     hit.enableBody = true;
     hit.outOfBoundsKill = true;
     hit.checkWorldBounds = true;
@@ -227,6 +248,9 @@ BasicGame.Game.prototype = {
     hit.body.bounce.set(0.9);
     hit.inputEnabled = true;
     hit.events.onInputDown.add(this.hitBoxClicked, this);
+
+//    var t =this.add.tween(hit.scale).to({y: 1.8}, 200, Phaser.Easing.Linear.InOut, true, 0, 1000, true);
+
     this.hitBoxGroup.add(hit);
   },
 
@@ -236,6 +260,8 @@ BasicGame.Game.prototype = {
     var found = this.answer.indexOf(item.value);
     if(found != -1) {
       this.answer.splice(found, 1);
+      item.children[0].destroy();
+      console.log("children " + item.children);
       this.popSound.play();
       this.particleBurst(item);
 //      item.kill();
