@@ -48,6 +48,32 @@ BasicGame.Game.prototype = {
 
 //    this.input.onDown.add(this.particleBurst, this);
 
+    //Temp nested group get alive test
+    this.first = this.add.group();
+    this.second = this.add.group();
+    this.third = this.add.group();
+    var one = this.add.sprite(20, 100, 'blue', 15);
+    one.name = "one";
+    var two = this.add.sprite(52, 100, 'blue', 14);
+    two.name = "two";
+    var three = this.add.sprite(84, 100, 'blue', 13);
+    three.name = "three";
+
+    var four = this.add.sprite(116, 100, 'blue', 12);
+    four.name = "four";
+    this.second.add(one);
+    this.second.name = "second g";
+    this.second.add(two);
+    this.third.add(three);
+    this.third.name = "third g";
+    this.third.add(four);
+    this.first.add(this.third);
+    this.first.add(this.second);
+    this.third.children[0].kill();
+    this.third.children[1].kill();
+    console.log(this.third.getFirstExists(false));
+    console.log(this.first.getFirstExists(false));
+    /**/
     //hitTokens
     this.hitBoxGroup = this.add.group();
 
