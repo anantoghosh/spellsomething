@@ -57,7 +57,8 @@ BasicGame.Preloader.prototype = {
     if (this.cache.isSoundDecoded('music') && this.ready == false)
     {
       this.ready = true;
-      this.state.start('Game');
+//      this.state.start('Game');
+        this.state.start("MainMenu");
     }
 
   }
