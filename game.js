@@ -3,13 +3,29 @@ BasicGame.Game = function (game) {
 
 };
 
+/*
+Hit Box Class
+*/
 HitBox = function (game, frame, value) {
-  Phaser.Sprite.call(this, game, 32, game.rnd.integerInRange(game.world.height + 32,game.world.height + 64), 'blue', frame);
+  Phaser.Sprite.call(this, game, 0, 0, 'blue', frame);
   this.value = value;
 };
 
 HitBox.prototype = Object.create(Phaser.Sprite.prototype);
 HitBox.prototype.constructor = HitBox;
+/**/
+
+/*
+New Hit Box Group Class
+This Group will contain two sprites, the container bubble and forground element ('alphabets')
+*/
+HitBoxContainerGroup = function(game, parent) {
+  Phaser.Group.call(this, game, parent);
+};
+
+HitBoxContainerGroup.prototype = Object.create(Phaser.Group.prototype);
+HitBoxContainerGroup.prototype.constructor = HitBoxContainerGroup;
+/**/
 
 BasicGame.Game.prototype = {
 
@@ -28,7 +44,7 @@ BasicGame.Game.prototype = {
     this.emitter = this.add.emitter(0, 0, 100);
 
     this.emitter.makeParticles("blueglow");
-    this.emitter.gravity = 200;
+    this.emitter.gravity = 300;
 
 //    this.input.onDown.add(this.particleBurst, this);
 
@@ -194,9 +210,20 @@ BasicGame.Game.prototype = {
     var found = this.answer.indexOf(item.value);
     if(found != -1) {
       this.answer.splice(found, 1);
-      item.kill();
       this.popSound.play();
       this.particleBurst(item);
+//      item.kill();
+      var tween = this.add.tween(item).to( { x: 160, y: 440}, 1000, Phaser.Easing.Cubic.Out, true).to({angle: 0}, 1000, Phaser.Easing.Elastic.Out);
+      this.add.tween(item.scale).to( { x: 1, y: 1}, 1000, Phaser.Easing.Cubic.Out, true);
+      tween.onComplete.add(function(){item.body.velocity.setTo(0, 0);
+      item.body.angularVelocity = 0;}, item);
+
+//      item.body.
+      item.body.enablebody = false;
+      this.hitBoxGroup.remove(item);
+      this.world.add(item);
+      console.log(item);
+
       if (this.answer.length === 0) {
         console.log(this.answer_map[this.currentStage]["tokens"].length);
         if (this.subStage == this.answer_map[this.currentStage]["tokens"].length - 1) {
