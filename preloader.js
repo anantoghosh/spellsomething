@@ -31,6 +31,7 @@ BasicGame.Preloader.prototype = {
     this.load.audio('pop', ['sounds/pop.ogg', 'sounds/pop.wav']);
     this.load.audio('music', ['sounds/Ambler.ogg', 'sounds/Ambler.wav']);
     this.load.image('backdrop', 'assets/backdrop.jpg');
+    this.load.image('blueglow','assets/blue_glow.png');
     //this.load.audio('titleMusic', ['audio/main_menu.mp3']);
     //  + lots of other required assets here
 

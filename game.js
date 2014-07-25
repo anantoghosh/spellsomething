@@ -24,6 +24,14 @@ BasicGame.Game.prototype = {
     this.backdrop.width = this.world.width;
     this.backdrop.height = this.world.height;
 
+    //Emitter
+    this.emitter = this.add.emitter(0, 0, 100);
+
+    this.emitter.makeParticles("blueglow");
+    this.emitter.gravity = 200;
+
+//    this.input.onDown.add(this.particleBurst, this);
+
     //hitTokens
     this.hitBoxGroup = this.add.group();
 
@@ -108,6 +116,18 @@ BasicGame.Game.prototype = {
     this.health = 3;
   },
 
+  particleBurst: function(pointer) {
+
+    //  Position the emitter where the mouse/touch event was
+    this.emitter.setRotation(0, 0);
+    this.emitter.setAlpha(0.3, 0.8);
+    this.emitter.setScale(0.5, 0.5);
+    this.emitter.x = pointer.x;
+    this.emitter.y = pointer.y;
+    this.emitter.start(true, 2000, null, 10);
+
+  },
+
   updateStage: function () {
 //    console.log(this.currentStage, this.subStage);
     this.answer = this.answer_map[this.currentStage]["tokens"][this.subStage].slice();
@@ -176,6 +196,7 @@ BasicGame.Game.prototype = {
       this.answer.splice(found, 1);
       item.kill();
       this.popSound.play();
+      this.particleBurst(item);
       if (this.answer.length === 0) {
         console.log(this.answer_map[this.currentStage]["tokens"].length);
         if (this.subStage == this.answer_map[this.currentStage]["tokens"].length - 1) {
