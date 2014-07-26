@@ -7,18 +7,21 @@ BasicGame.Game = function (game) {
 Hit Box Class
 */
 HitBox = function (game, frame, value) {
-  Phaser.Sprite.call(this, game, 0, 0);
+  Phaser.Sprite.call(this, game, 0, 0, "blue", frame);
+//  this.alpha = 0.7;
   var bubble = game.add.sprite(0, 0, "bubble");
   bubble.anchor.setTo(0.5, 0.5);
   bubble.tint = 0x69b9fc;
   bubble.alpha = 0.5;
-
-  this.number = game.add.sprite(0, 0,'blue', frame);
-  this.number.anchor.setTo(0.5, 0.5);
-  this.number.scale.setTo(0.7,0.7);
-
+  bubble.scale.setTo(1.2,1.2);
   this.addChild(bubble);
-  this.addChild(this.number);
+
+//  this.number = game.add.sprite(0, 0,'blue', frame);
+//  this.number.anchor.setTo(0.5, 0.5);
+//  this.number.scale.setTo(0.7,0.7);
+//  this.number.alpha = 0.7;
+
+//  this.addChild(this.number);
 //  this.createContainer(game);
 };
 
@@ -105,9 +108,9 @@ BasicGame.Game.prototype = {
     this.updateStage();
 
     this.popSound = this.add.audio('pop');
-    this.music = this.add.audio('music');
-    this.music.loop = true;
-    this.music.play();
+//    this.music = this.add.audio('music');
+//    this.music.loop = true;
+//    this.music.play();
 
     //Button ui
     this.bar = this.add.sprite(0, 0, "button");
@@ -129,6 +132,7 @@ BasicGame.Game.prototype = {
   },
 
   setUpGame: function () {
+    this.time.deltaCap = 0.02;
     this.sprite_map = {
       "zero": [0],
       "one": [1],
@@ -234,7 +238,7 @@ BasicGame.Game.prototype = {
 //    hit.frame = frame;
     hit.value = token_map;
 
-    hit.number.frame = frame;
+    hit.frame = frame;
     hit.enableBody = true;
     hit.outOfBoundsKill = true;
     hit.checkWorldBounds = true;
@@ -265,6 +269,7 @@ BasicGame.Game.prototype = {
       this.popSound.play();
       this.particleBurst(item);
 //      item.kill();
+      item.alpha = 1;
       var tween = this.add.tween(item).to( { x: 160, y: 440}, 1000, Phaser.Easing.Cubic.Out, true).to({angle: 0}, 1000, Phaser.Easing.Elastic.Out);
       this.add.tween(item.scale).to( { x: 1, y: 1}, 1000, Phaser.Easing.Cubic.Out, true);
       tween.onComplete.add(function(){item.body.velocity.setTo(0, 0);
