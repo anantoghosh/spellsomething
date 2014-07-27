@@ -237,7 +237,7 @@ BasicGame.Game.prototype = {
 
     hit.setUp(frame, token_map, this);
 
-//    var t =this.add.tween(hit.scale).to({y: 1.8}, 200, Phaser.Easing.Linear.InOut, true, 0, 1000, true);
+//    var t =this.add.tween(hit.scale).to({x: 1.1, y: 1.1}, 200, Phaser.Easing.Linear.InOut, true, 0, 0, true);
 
     this.hitBoxGroup.add(hit);
   },
@@ -246,8 +246,8 @@ BasicGame.Game.prototype = {
     this.text = item.value;
     console.log(item.value);
     var found = this.answer.indexOf(item.value);
-    if(found != -1) {
-      this.answer.splice(found, 1);
+    if(item.value == this.answer[0]) {
+      this.answer.splice(0, 1);
       item.children[0].destroy();
       console.log("children " + item.children);
       this.popSound.play();
