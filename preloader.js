@@ -27,6 +27,7 @@ BasicGame.Preloader.prototype = {
 
     //  Here we load the rest of the assets our game needs.
     this.load.spritesheet('blue', 'assets/blue.png', 32, 32);
+    this.load.spritesheet('alphabets', 'assets/alphabets2.png', 64, 58);
     this.load.image('button', 'assets/grey_button02.png');
     this.load.audio('pop', ['sounds/pop.ogg', 'sounds/pop.wav']);
     this.load.audio('music', ['sounds/Ambler.ogg', 'sounds/Ambler.wav']);
