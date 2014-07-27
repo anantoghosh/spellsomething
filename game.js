@@ -31,7 +31,7 @@ HitBox.prototype.setUp = function(frame, token_map, game) {
   game.physics.enable(this, Phaser.Physics.ARCADE);
   this.body.velocity.x = game.rnd.integerInRange(-250, 250);
   this.body.angularVelocity = game.rnd.integerInRange(-360, 360);
-  this.body.setSize(64, 64);
+//  this.body.setSize(64, 64);
   this.body.velocity.y = game.rnd.integerInRange(-200, -100);
 //  this.scale.setTo(1,);
   this.anchor.setTo(0.5, 0.5);
@@ -39,6 +39,45 @@ HitBox.prototype.setUp = function(frame, token_map, game) {
   this.inputEnabled = true;
   this.events.onInputDown.add(game.hitBoxClicked, game);
 };
+/**/
+
+/*
+GameUI
+*/
+GameUI = function (game) {
+  //Button ui
+//  game.bar = game.add.sprite(0, 0, "button");
+//  game.bar.width = game.world.width;
+//  game.bar.height = 64;
+//  game.bar.tint = 0xededed;
+//  game.bar.y = game.world.height - game.bar.height;
+
+  game.menu_sprites = [];
+
+};
+
+GameUI.prototype.updateUI = function(game) {
+  //Remove any Previous sprites
+  if(game.menu_sprites.length !== 0){
+    for(var i=0; i<game.menu_sprites.length; i++) {
+      game.menu_sprites[i].destroy();
+    }
+  }
+
+  var frame;
+
+  game.menu_x_pos = game.world.centerX - game.answer.length/2 * 32;
+
+  for(var ans=0; ans<game.answer.length; ans++) {
+
+    frame = game.sprite_map[game.answer[ans]][0];
+
+    game.menu_sprites[ans] = game.add.sprite(game.menu_x_pos+ans*32, game.world.height - 64, "alphabets", frame);
+//    game.menu_sprites[ans].anchor.setTo(0.5, 0.5);
+    game.menu_sprites[ans].tint = 0x555555;
+
+  }
+}
 /**/
 
 BasicGame.Game.prototype = {
@@ -73,15 +112,7 @@ BasicGame.Game.prototype = {
 //    this.music.loop = true;
 //    this.music.play();
 
-    //Button ui
-    this.bar = this.add.sprite(0, 0, "button");
-    this.bar.width = this.world.width;
-    this.bar.height = 64;
-    this.bar.tint = 0xededed;
-    this.bar.y = this.world.height - this.bar.height;
-
-    this.barText = this.game.add.text(10, this.world.height - 32,'', {fill: '#222222'});
-    this.menu_sprites = [];
+    this.gameUI = new GameUI(this);
     this.updateStage();
 
     // Show FPS
@@ -183,25 +214,11 @@ BasicGame.Game.prototype = {
 
   updateStage: function () {
 
-
-    console.log("menu sprite lenght: " + this.menu_sprites.length);
-    if(this.menu_sprites.length !== 0){
-      for(var i=0; i<this.menu_sprites.length; i++) {
-        this.menu_sprites[i].destroy();
-        console.log(this.menu_sprites);
-      }
-    }
     //Change Required Answer with the currentStage and subStage values
     this.answer = this.answer_map[this.currentStage]["tokens"][this.subStage].slice();
 
-    var frame;
-    this.menu_x_pos = this.world.centerX - this.answer.length/2 * 32;
-    for(var ans=0; ans<this.answer.length; ans++) {
-      frame = this.sprite_map[this.answer[ans]][this.rnd.integerInRange(0,this.sprite_map[this.answer[ans]].length-1)];
-      this.menu_sprites[ans] = this.add.sprite(this.menu_x_pos+ans*32, this.world.height - 64, "alphabets", frame);
-      this.menu_sprites[ans].tint = 0x555555;
-      console.log("menu sprite lenght: " + this.menu_sprites.length);
-    }
+    this.gameUI.updateUI(this);
+
   },
 
   createWall: function (x, y) {
@@ -293,7 +310,6 @@ BasicGame.Game.prototype = {
         this.fpsText.setText(this.time.fps);
     }
 
-    this.barText.setText(this.answer[0] + " x" + this.answer.length + "    life: " + this.health);
     this.physics.arcade.collide(this.hitBoxGroup);
     this.physics.arcade.collide(this.hitBoxGroup, this.wallgroup);
   },
