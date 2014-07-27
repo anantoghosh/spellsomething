@@ -8,46 +8,37 @@ Hit Box Class
 */
 HitBox = function (game, frame, value) {
   Phaser.Sprite.call(this, game, 0, 0, "blue", frame);
-//  this.alpha = 0.7;
+
+  //Bubble Container Sprite as child
   var bubble = game.add.sprite(0, 0, "bubble");
   bubble.anchor.setTo(0.5, 0.5);
   bubble.tint = 0x69b9fc;
   bubble.alpha = 0.5;
   bubble.scale.setTo(1.2,1.2);
   this.addChild(bubble);
-
-//  this.number = game.add.sprite(0, 0,'blue', frame);
-//  this.number.anchor.setTo(0.5, 0.5);
-//  this.number.scale.setTo(0.7,0.7);
-//  this.number.alpha = 0.7;
-
-//  this.addChild(this.number);
-//  this.createContainer(game);
 };
 
 HitBox.prototype = Object.create(Phaser.Sprite.prototype);
-//HitBox.prototype.update = function(game) {
-//    this.bubble.x = this.x;
-//    this.bubble.y = this.y;
-//  };
-//HitBox.prototype.createContainer = function(game) {
-//  this.bubble = game.add.sprite(this.x, this.y, 'blue', 15);
-////  this.bubble.anchor.setTo(0.5,0.5);
-//  this.bubble.z = -100;
-//};
 HitBox.prototype.constructor = HitBox;
-/**/
 
-/*
-New Hit Box Group Class
-This Group will contain two sprites, the container bubble and forground element ('alphabets')
-*/
-HitBoxContainerGroup = function(game, parent) {
-  Phaser.Group.call(this, game, parent);
+HitBox.prototype.setUp = function(frame, token_map, game) {
+  this.reset(32, game.rnd.integerInRange(game.world.height + 32,game.world.height + 64));
+  this.value = token_map;
+  this.frame = frame;
+  this.enableBody = true;
+  this.outOfBoundsKill = true;
+  this.checkWorldBounds = true;
+  game.physics.enable(this, Phaser.Physics.ARCADE);
+  this.body.velocity.x = game.rnd.integerInRange(-250, 250);
+  this.body.angularVelocity = game.rnd.integerInRange(-360, 360);
+  this.body.setSize(32, 32);
+  this.body.velocity.y = game.rnd.integerInRange(-200, -100);
+  this.scale.setTo(2,2);
+  this.anchor.setTo(0.5, 0.5);
+  this.body.bounce.set(1);
+  this.inputEnabled = true;
+  this.events.onInputDown.add(game.hitBoxClicked, game);
 };
-
-HitBoxContainerGroup.prototype = Object.create(Phaser.Group.prototype);
-HitBoxContainerGroup.prototype.constructor = HitBoxContainerGroup;
 /**/
 
 BasicGame.Game.prototype = {
@@ -69,34 +60,6 @@ BasicGame.Game.prototype = {
     this.emitter.makeParticles("blueglow");
     this.emitter.gravity = 300;
 
-//    this.input.onDown.add(this.particleBurst, this);
-
-    //Temp nested group get alive test
-//    this.first = this.add.group();
-//    this.second = this.add.group();
-//    this.third = this.add.group();
-//    var one = this.add.sprite(20, 100, 'blue', 15);
-//    one.name = "one";
-//    var two = this.add.sprite(52, 100, 'blue', 14);
-//    two.name = "two";
-//    var three = this.add.sprite(84, 100, 'blue', 13);
-//    three.name = "three";
-//
-//    var four = this.add.sprite(116, 100, 'blue', 12);
-//    four.name = "four";
-//    this.second.add(one);
-//    this.second.name = "second g";
-//    this.second.add(two);
-//    this.third.add(three);
-//    this.third.name = "third g";
-//    this.third.add(four);
-//    this.first.add(this.third);
-//    this.first.add(this.second);
-//    this.third.children[0].kill();
-//    this.third.children[1].kill();
-//    console.log(this.third.getFirstExists(false));
-//    console.log(this.first.getFirstExists(false));
-    /**/
     //hitTokens
     this.hitBoxGroup = this.add.group();
 
@@ -104,8 +67,6 @@ BasicGame.Game.prototype = {
     this.wallgroup = this.add.group();
     this.wallgroup.add(this.createWall(-1, 0));
     this.wallgroup.add(this.createWall(this.world.width, 0));
-
-    this.updateStage();
 
     this.popSound = this.add.audio('pop');
 //    this.music = this.add.audio('music');
@@ -120,6 +81,8 @@ BasicGame.Game.prototype = {
     this.bar.y = this.world.height - this.bar.height;
 
     this.barText = this.game.add.text(10, this.world.height - 32,'', {fill: '#222222'});
+    this.menu_sprites = [];
+    this.updateStage();
 
     // Show FPS
     this.game.time.advancedTiming = true;
@@ -195,9 +158,26 @@ BasicGame.Game.prototype = {
   },
 
   updateStage: function () {
-//    console.log(this.currentStage, this.subStage);
+
+
+    console.log("menu sprite lenght: " + this.menu_sprites.length);
+    if(this.menu_sprites.length !== 0){
+      for(var i=0; i<this.menu_sprites.length; i++) {
+        this.menu_sprites[i].destroy();
+        console.log(this.menu_sprites);
+      }
+    }
+    //Change Required Answer with the currentStage and subStage values
     this.answer = this.answer_map[this.currentStage]["tokens"][this.subStage].slice();
-    console.log(+ this.currentStage.match(/\d+/g)[0]);
+
+    var frame;
+    this.menu_x_pos = this.world.centerX - this.answer.length/2 * 32;
+    for(var ans=0; ans<this.answer.length; ans++) {
+      frame = this.sprite_map[this.answer[ans]][this.rnd.integerInRange(0,this.sprite_map[this.answer[ans]].length-1)];
+      this.menu_sprites[ans] = this.add.sprite(this.menu_x_pos+ans*32, this.world.height - 64, "blue", frame);
+      this.menu_sprites[ans].tint = 0x555555;
+      console.log("menu sprite lenght: " + this.menu_sprites.length);
+    }
   },
 
   createWall: function (x, y) {
@@ -212,46 +192,26 @@ BasicGame.Game.prototype = {
 
   createHitBox: function () {
     var token_map;
+
+    // 20% chance of getting a correct Hit Box
     var probability = Math.floor(Math.random()*11);
     if (probability < 2 && this.answer.length !== 0) {
       token_map = this.answer[0];
-//      console.log("Boosted:" + token_map);
     }
     else {
       var tokens = this.stages[this.currentStage]["tokens"][this.subStage];
       token_map = this.token_group_map[tokens][this.rnd.integerInRange(0,this.token_group_map[tokens].length-1)];
-//      console.log("Normal:" + token_map);
     }
 
     var frame = this.sprite_map[token_map][this.rnd.integerInRange(0,this.sprite_map[token_map].length-1)];
+
     var hit = this.hitBoxGroup.getFirstExists(false);
 
     if(!hit) {
         hit = new HitBox(this.game, frame, token_map);
-//        console.log("New" + hit);
-    }
-    else {
-//      console.log("Reused: " + hit);
     }
 
-    hit.reset(32, this.rnd.integerInRange(this.world.height + 32,this.world.height + 64));
-//    hit.frame = frame;
-    hit.value = token_map;
-
-    hit.frame = frame;
-    hit.enableBody = true;
-    hit.outOfBoundsKill = true;
-    hit.checkWorldBounds = true;
-    this.physics.enable(hit, Phaser.Physics.ARCADE);
-    hit.body.velocity.x = this.rnd.integerInRange(-250, 250);
-    hit.body.angularVelocity = this.rnd.integerInRange(-360, 360);
-    hit.body.setSize(32, 32);
-    hit.body.velocity.y = this.rnd.integerInRange(-200, -100);
-    hit.scale.setTo(2,2);
-    hit.anchor.setTo(0.5, 0.5);
-    hit.body.bounce.set(0.9);
-    hit.inputEnabled = true;
-    hit.events.onInputDown.add(this.hitBoxClicked, this);
+    hit.setUp(frame, token_map, this);
 
 //    var t =this.add.tween(hit.scale).to({y: 1.8}, 200, Phaser.Easing.Linear.InOut, true, 0, 1000, true);
 
@@ -270,12 +230,11 @@ BasicGame.Game.prototype = {
       this.particleBurst(item);
 //      item.kill();
       item.alpha = 1;
-      var tween = this.add.tween(item).to( { x: 160, y: 440}, 1000, Phaser.Easing.Cubic.Out, true).to({angle: 0}, 1000, Phaser.Easing.Elastic.Out);
+      var tween = this.add.tween(item).to( { x: this.menu_x_pos+16 + 0*32, y: this.world.height - 64 +19}, 1000, Phaser.Easing.Cubic.Out, true).to({angle: 0}, 1000, Phaser.Easing.Elastic.Out);
       this.add.tween(item.scale).to( { x: 1, y: 1}, 1000, Phaser.Easing.Cubic.Out, true);
       tween.onComplete.add(function(){item.body.velocity.setTo(0, 0);
       item.body.angularVelocity = 0;}, item);
 
-//      item.body.
       item.body.enablebody = false;
       this.hitBoxGroup.remove(item);
       this.world.add(item);
@@ -316,15 +275,9 @@ BasicGame.Game.prototype = {
   },
 
   render: function () {
-//    this.game.debug.text(this.text, 40,10);
-//    this.game.debug.body( this.hitBoxGroup.getAt(1) );
   },
 
   quitGame: function (pointer) {
-    //  Here you should destroy anything you no longer need.
-    //  Stop music, delete sprites, purge caches, free resources, all that good stuff.
-
-    //  Then let's go back to the main menu.
     this.state.start('MainMenu');
 
   }
