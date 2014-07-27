@@ -9,6 +9,7 @@ Hit Box Class
 HitBox = function (game, frame, value) {
   Phaser.Sprite.call(this, game, 0, 0, "alphabets", frame);
 
+  this.width = 64;
   //Bubble Container Sprite as child
   var bubble = game.add.sprite(0, 0, "bubble");
   bubble.anchor.setTo(0.5, 0.5);
@@ -81,13 +82,15 @@ GameUI.prototype.updateUI = function(game) {
 
   var frame;
 
-  game.menu_x_pos = game.world.centerX - game.answer.length/2 * 32;
+  var sprite_width = 32;
+  game.menu_x_pos = [];
+  game.menu_x_pos[0] = (game.world.width - game.answer.length * sprite_width)/2 - 16;
 
   for(var ans=0; ans<game.answer.length; ans++) {
 
     frame = game.sprite_map[game.answer[ans]][0];
-
-    game.menu_sprites[ans] = game.add.sprite(game.menu_x_pos+ans*32, game.world.height - 64, "alphabets", frame);
+    game.menu_x_pos[ans] = game.menu_x_pos[0] + ans * sprite_width;
+    game.menu_sprites[ans] = game.add.sprite(game.menu_x_pos[ans], game.world.height - 64, "alphabets", frame);
 //    game.menu_sprites[ans].anchor.setTo(0.5, 0.5);
     game.menu_sprites[ans].tint = 0x555555;
 
@@ -137,23 +140,13 @@ BasicGame.Game.prototype = {
         10, 10, '', { fontSize: '20px', fill: '#ffffff' }
     );
 
-
+    this.i = 0;
     this.game.time.events.loop(Phaser.Timer.SECOND/2, this.createHitBox, this);
   },
 
   setUpGame: function () {
     this.time.deltaCap = 0.02;
     this.sprite_map = {
-      "zero": [26],
-      "one": [27],
-      "two": [28],
-      "three": [29],
-      "four": [30],
-      "five": [31],
-      "six": [32],
-      "seven": [33],
-      "eight": [34],
-      "nine": [35],
       "a": [0],
       "b": [1],
       "c": [2],
@@ -180,6 +173,16 @@ BasicGame.Game.prototype = {
       "x": [23],
       "y": [24],
       "z": [25],
+      "zero": [26],
+      "one": [27],
+      "two": [28],
+      "three": [29],
+      "four": [30],
+      "five": [31],
+      "six": [32],
+      "seven": [33],
+      "eight": [34],
+      "nine": [35],
     };
 
     this.token_group_map = {
@@ -287,10 +290,21 @@ BasicGame.Game.prototype = {
       this.particleBurst(item);
 //      item.kill();
       item.alpha = 1;
-      var tween = this.add.tween(item).to( { x: this.menu_x_pos+16 + 0*32, y: this.world.height - 64 +19}, 1000, Phaser.Easing.Cubic.Out, true).to({angle: 0}, 1000, Phaser.Easing.Elastic.Out);
+      var tween = this.add.tween(item).to(
+        { x: this.menu_x_pos[this.i++]+32, y: this.world.height - 64 + 32 },
+        1000,
+        Phaser.Easing.Cubic.Out,
+        true
+      ).to(
+        {angle: 0},
+        1000,
+        Phaser.Easing.Elastic.Out
+      );
       this.add.tween(item.scale).to( { x: 1, y: 1}, 1000, Phaser.Easing.Cubic.Out, true);
-      tween.onComplete.add(function(){item.body.velocity.setTo(0, 0);
-      item.body.angularVelocity = 0;}, item);
+      tween.onComplete.add(function(){
+        item.body.velocity.setTo(0, 0);
+        item.body.angularVelocity = 0;
+      }, item);
 
       item.body.enablebody = false;
       this.hitBoxGroup.remove(item);
@@ -312,6 +326,7 @@ BasicGame.Game.prototype = {
         else {
           this.subStage++;
         }
+        this.i = 0;
         this.updateStage();
       }
     }
