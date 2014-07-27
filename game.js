@@ -56,6 +56,21 @@ GameUI = function (game) {
 
 };
 
+GameUI.prototype.updateHeart = function(game) {
+  this.heart = [];
+  for(var i=0; i< game.health; i++) {
+    this.heart[i] = game.add.sprite(game.world.width - i*24 - 12, 12, 'heart');
+    this.heart[i].width = 24;
+    this.heart[i].height = 24;
+    this.heart[i].anchor.setTo(0.5, 0.5);
+  }
+};
+
+GameUI.prototype.destroyHeart = function(game) {
+  this.heart[this.heart.length - 1].destroy();
+  this.heart.pop();
+};
+
 GameUI.prototype.updateUI = function(game) {
   //Remove any Previous sprites
   if(game.menu_sprites.length !== 0){
@@ -113,6 +128,7 @@ BasicGame.Game.prototype = {
 //    this.music.play();
 
     this.gameUI = new GameUI(this);
+    this.gameUI.updateHeart(this);
     this.updateStage();
 
     // Show FPS
@@ -301,6 +317,7 @@ BasicGame.Game.prototype = {
     }
     else {
       this.health--;
+      this.gameUI.destroyHeart();
     }
   },
 
