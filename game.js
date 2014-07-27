@@ -7,14 +7,14 @@ BasicGame.Game = function (game) {
 Hit Box Class
 */
 HitBox = function (game, frame, value) {
-  Phaser.Sprite.call(this, game, 0, 0, "blue", frame);
+  Phaser.Sprite.call(this, game, 0, 0, "alphabets", frame);
 
   //Bubble Container Sprite as child
   var bubble = game.add.sprite(0, 0, "bubble");
   bubble.anchor.setTo(0.5, 0.5);
   bubble.tint = 0x69b9fc;
   bubble.alpha = 0.5;
-  bubble.scale.setTo(1.2,1.2);
+  bubble.scale.setTo(2.2,2.2);
   this.addChild(bubble);
 };
 
@@ -31,9 +31,9 @@ HitBox.prototype.setUp = function(frame, token_map, game) {
   game.physics.enable(this, Phaser.Physics.ARCADE);
   this.body.velocity.x = game.rnd.integerInRange(-250, 250);
   this.body.angularVelocity = game.rnd.integerInRange(-360, 360);
-  this.body.setSize(32, 32);
+  this.body.setSize(64, 64);
   this.body.velocity.y = game.rnd.integerInRange(-200, -100);
-  this.scale.setTo(2,2);
+//  this.scale.setTo(1,);
   this.anchor.setTo(0.5, 0.5);
   this.body.bounce.set(1);
   this.inputEnabled = true;
@@ -97,35 +97,59 @@ BasicGame.Game.prototype = {
   setUpGame: function () {
     this.time.deltaCap = 0.02;
     this.sprite_map = {
-      "zero": [0],
-      "one": [1],
-      "two": [2],
-      "three": [3],
-      "four": [4],
-      "five": [5],
-      "six": [6],
-      "seven": [7],
-      "eight": [8],
-      "nine": [9],
-      "blue": [10],
-      "red": [11]
+      "zero": [26],
+      "one": [27],
+      "two": [28],
+      "three": [29],
+      "four": [30],
+      "five": [31],
+      "six": [32],
+      "seven": [33],
+      "eight": [34],
+      "nine": [35],
+      "a": [0],
+      "b": [1],
+      "c": [2],
+      "d": [3],
+      "e": [4],
+      "f": [5],
+      "g": [6],
+      "h": [7],
+      "i": [8],
+      "j": [9],
+      "k": [10],
+      "l": [11],
+      "m": [12],
+      "n": [13],
+      "o": [14],
+      "p": [15],
+      "q": [16],
+      "r": [17],
+      "s": [18],
+      "t": [19],
+      "u": [20],
+      "v": [21],
+      "w": [22],
+      "x": [23],
+      "y": [24],
+      "z": [25],
     };
 
     this.token_group_map = {
       "numbers": ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"],
-      "colors": ["blue", "red"],
+      "alphabets": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
     };
 
     this.stages = {
       "stage1": {
         "start_text": "something something",
-        "tokens": ["numbers", "colors"],
+        "tokens": ["alphabets", "alphabets"],
         "win_text": "Your getting smarter padwan",
         "lose_text": "Boo hoo",
       },
       "stage2": {
         "start_text": "something something",
-        "tokens": ["colors", "numbers"],
+        "tokens": ["alphabets", "alphabets"],
         "win_text": "Your getting smarter padwan",
         "lose_text": "Boo hoo",
       },
@@ -133,10 +157,10 @@ BasicGame.Game.prototype = {
 
     this.answer_map = {
       "stage1": {
-        "tokens": [["one", "one", "one", "one"], ["blue", "blue", "blue"]],
+        "tokens": [["s", "p", "e", "l", "l"], ["h", "a", "p", "p", "y"]],
       },
       "stage2": {
-        "tokens": [["red", "red", "red", "red"], ["five", "five", "five"]],
+        "tokens": [["s", "m", "a", "r", "t"], ["i", "d", "i", "o", "t"]],
       },
     };
 
@@ -174,7 +198,7 @@ BasicGame.Game.prototype = {
     this.menu_x_pos = this.world.centerX - this.answer.length/2 * 32;
     for(var ans=0; ans<this.answer.length; ans++) {
       frame = this.sprite_map[this.answer[ans]][this.rnd.integerInRange(0,this.sprite_map[this.answer[ans]].length-1)];
-      this.menu_sprites[ans] = this.add.sprite(this.menu_x_pos+ans*32, this.world.height - 64, "blue", frame);
+      this.menu_sprites[ans] = this.add.sprite(this.menu_x_pos+ans*32, this.world.height - 64, "alphabets", frame);
       this.menu_sprites[ans].tint = 0x555555;
       console.log("menu sprite lenght: " + this.menu_sprites.length);
     }
