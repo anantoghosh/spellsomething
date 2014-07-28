@@ -397,6 +397,10 @@ BasicGame.Game.prototype = {
   quitGame: function (pointer) {
     this.state.start('MainMenu');
 
-  }
+  },
+
+  shutdown: function() {
+    this.music.destroy();
+  },
 
 };
