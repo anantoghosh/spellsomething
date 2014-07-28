@@ -14,8 +14,9 @@ HitBox = function (game, frame, value) {
   var bubble = game.add.sprite(0, 0, "bubble");
   bubble.anchor.setTo(0.5, 0.5);
   bubble.tint = Math.random() * 0xffffff;
-  bubble.alpha = 0.5;
-  bubble.scale.setTo(2.2,2.2);
+  bubble.alpha = 0.6;
+  bubble.scale.setTo(1.2,1.2);
+  game.add.tween(bubble.scale).to({x:1.1, y: 1.1}, 400, Phaser.Easing.Linear.None, true, 0, 1000, true);
   this.addChild(bubble);
 };
 
