@@ -114,6 +114,15 @@ LevelManager = function(game) {
 };
 
 LevelManager.prototype.constructor = LevelManager;
+
+LevelManager.prototype.startLevel = function(game) {
+    this.timer = game.time.events.loop(Phaser.Timer.SECOND/2, game.createHitBox, game);
+};
+
+LevelManager.prototype.stopLevel = function(game) {
+  game.time.events.remove(this.timer);
+};
+
 LevelManager.prototype.changeLevel = function(game) {
   if (game.answer.length === 0) {
     if (this.subStage == game.answer_map[this.currentStage]["tokens"].length - 1) {
@@ -164,9 +173,9 @@ BasicGame.Game.prototype = {
     this.wallgroup.add(this.createWall(this.world.width, 0));
 
     this.popSound = this.add.audio('pop');
-//    this.music = this.add.audio('music');
-//    this.music.loop = true;
-//    this.music.play();
+    this.music = this.add.audio('music');
+    this.music.loop = true;
+    this.music.play();
 
     this.gameUI = new GameUI(this);
     this.gameUI.updateHeart(this);
@@ -180,7 +189,7 @@ BasicGame.Game.prototype = {
     );
 
     this.i = 0;
-    this.game.time.events.loop(Phaser.Timer.SECOND/2, this.createHitBox, this);
+    this.level.startLevel(this);
   },
 
   setUpGame: function () {
