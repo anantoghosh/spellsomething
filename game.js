@@ -52,9 +52,16 @@ GameUI = function (game) {
 //  game.bar.height = 64;
 //  game.bar.tint = 0xededed;
 //  game.bar.y = game.world.height - game.bar.height;
-
+  this.poppedChars = [];
   game.menu_sprites = [];
 
+};
+
+GameUI.prototype.destroyChars = function(game) {
+  for(var i=this.poppedChars.length-1; i>=0; i--) {
+    this.poppedChars[i].destroy();
+    this.poppedChars.pop();
+  }
 };
 
 GameUI.prototype.updateHeart = function(game) {
@@ -311,6 +318,7 @@ BasicGame.Game.prototype = {
   },
 
   hitBoxClicked: function (item, pointer) {
+    this.gameUI.poppedChars.push(item);
     this.text = item.value;
     var found = this.answer.indexOf(item.value);
     if(item.value == this.answer[0]) {
@@ -341,7 +349,12 @@ BasicGame.Game.prototype = {
       this.world.add(item);
 
       if (this.answer.length === 0) {
-        this.level.changeLevel(this);
+        this.time.events.add(Phaser.Timer.SECOND * 2,
+                             function() {
+                               this.level.changeLevel(this);
+                               this.gameUI.destroyChars();
+                             },
+                             this);
       }
     }
     else {
