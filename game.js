@@ -98,6 +98,37 @@ GameUI.prototype.updateUI = function(game) {
 };
 /**/
 
+/*
+Level Manager
+*/
+LevelManager = function(game) {
+  this.currentStage = "stage1";
+  this.subStage = 0;
+};
+
+LevelManager.prototype.constructor = LevelManager;
+LevelManager.prototype.changeLevel = function(game) {
+  if (game.answer.length === 0) {
+    if (this.subStage == game.answer_map[this.currentStage]["tokens"].length - 1) {
+      this.subStage = 0;
+      var thisStage = + this.currentStage.match(/\d+/g)[0];
+      thisStage++;
+
+      //templogic back to stage 1
+      if (thisStage == 3)
+        thisStage = 1;
+
+      this.currentStage = "stage" + thisStage;
+    }
+    else {
+      this.subStage++;
+    }
+    game.i = 0;
+    game.updateStage();
+  }
+};
+/**/
+
 BasicGame.Game.prototype = {
 
   preload: function() {
@@ -132,6 +163,7 @@ BasicGame.Game.prototype = {
 
     this.gameUI = new GameUI(this);
     this.gameUI.updateHeart(this);
+    this.level = new LevelManager(this);
     this.updateStage();
 
     // Show FPS
@@ -214,8 +246,8 @@ BasicGame.Game.prototype = {
       },
     };
 
-    this.currentStage = "stage1";
-    this.subStage = 0;
+//    this.currentStage = "stage1";
+//    this.subStage = 0;
     this.health = 3;
   },
 
@@ -234,7 +266,7 @@ BasicGame.Game.prototype = {
   updateStage: function () {
 
     //Change Required Answer with the currentStage and subStage values
-    this.answer = this.answer_map[this.currentStage]["tokens"][this.subStage].slice();
+    this.answer = this.answer_map[this.level.currentStage]["tokens"][this.level.subStage].slice();
 
     this.gameUI.updateUI(this);
 
@@ -259,11 +291,11 @@ BasicGame.Game.prototype = {
       token_map = this.answer[0];
     }
     else {
-      var tokens = this.stages[this.currentStage]["tokens"][this.subStage];
+      var tokens = this.stages[this.level.currentStage]["tokens"][this.level.subStage];
       token_map = this.token_group_map[tokens][this.rnd.integerInRange(0,this.token_group_map[tokens].length-1)];
     }
 
-    var frame = this.sprite_map[token_map][this.rnd.integerInRange(0,this.sprite_map[token_map].length-1)];
+    var frame = this.sprite_map[token_map][0];
 
     var hit = this.hitBoxGroup.getFirstExists(false);
 
@@ -280,15 +312,12 @@ BasicGame.Game.prototype = {
 
   hitBoxClicked: function (item, pointer) {
     this.text = item.value;
-    console.log(item.value);
     var found = this.answer.indexOf(item.value);
     if(item.value == this.answer[0]) {
       this.answer.splice(0, 1);
       item.children[0].destroy();
-      console.log("children " + item.children);
       this.popSound.play();
       this.particleBurst(item);
-//      item.kill();
       item.alpha = 1;
       var tween = this.add.tween(item).to(
         { x: this.menu_x_pos[this.i++]+32, y: this.world.height - 64 + 28 },
@@ -310,25 +339,9 @@ BasicGame.Game.prototype = {
       item.body.enablebody = false;
       this.hitBoxGroup.remove(item);
       this.world.add(item);
-      console.log(item);
 
       if (this.answer.length === 0) {
-        console.log(this.answer_map[this.currentStage]["tokens"].length);
-        if (this.subStage == this.answer_map[this.currentStage]["tokens"].length - 1) {
-          this.subStage = 0;
-          var thisStage = + this.currentStage.match(/\d+/g)[0];
-          thisStage++;
-          //templogic back to stage 1
-          if (thisStage == 3) thisStage = 1;
-
-          this.currentStage = "stage" + thisStage;
-          console.log(this.currentStage);
-        }
-        else {
-          this.subStage++;
-        }
-        this.i = 0;
-        this.updateStage();
+        this.level.changeLevel(this);
       }
     }
     else {
