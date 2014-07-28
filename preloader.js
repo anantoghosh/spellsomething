@@ -35,6 +35,7 @@ BasicGame.Preloader.prototype = {
     this.load.image('blueglow','assets/blue_glow.png');
     this.load.image('bubble','assets/circle.png');
     this.load.image('heart', 'assets/heart.png');
+    this.load.image('happy', 'assets/happy.jpg');
     //this.load.audio('titleMusic', ['audio/main_menu.mp3']);
     //  + lots of other required assets here
 

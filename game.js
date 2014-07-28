@@ -53,8 +53,8 @@ GameUI = function (game) {
 //  game.bar.tint = 0xededed;
 //  game.bar.y = game.world.height - game.bar.height;
   this.poppedChars = [];
-  game.menu_sprites = [];
-
+  this.menu_sprites = [];
+  console.log("gameui called");
 };
 
 GameUI.prototype.destroyChars = function(game) {
@@ -81,9 +81,9 @@ GameUI.prototype.destroyHeart = function(game) {
 
 GameUI.prototype.updateUI = function(game) {
   //Remove any Previous sprites
-  if(game.menu_sprites.length !== 0){
-    for(var i=0; i<game.menu_sprites.length; i++) {
-      game.menu_sprites[i].destroy();
+  if(this.menu_sprites.length !== 0){
+    for(var i=0; i<this.menu_sprites.length; i++) {
+      this.menu_sprites[i].destroy();
     }
   }
 
@@ -97,9 +97,9 @@ GameUI.prototype.updateUI = function(game) {
 
     frame = game.sprite_map[game.answer[ans]][0];
     game.menu_x_pos[ans] = game.menu_x_pos[0] + ans * sprite_width;
-    game.menu_sprites[ans] = game.add.sprite(game.menu_x_pos[ans], game.world.height - 64, "alphabets", frame);
-//    game.menu_sprites[ans].anchor.setTo(0.5, 0.5);
-    game.menu_sprites[ans].tint = 0x555555;
+    this.menu_sprites[ans] = game.add.sprite(game.menu_x_pos[ans], game.world.height - 64, "alphabets", frame);
+//    this.menu_sprites[ans].anchor.setTo(0.5, 0.5);
+    this.menu_sprites[ans].tint = 0x555555;
 
   }
 };
@@ -108,22 +108,22 @@ GameUI.prototype.updateUI = function(game) {
 /*
 Level Manager
 */
-LevelManager = function(game) {
+BasicGame.LevelManager = function(game) {
   this.currentStage = "stage1";
   this.subStage = 0;
 };
 
-LevelManager.prototype.constructor = LevelManager;
+//BasicGame.LevelManager.prototype.constructor = LevelManager;
 
-LevelManager.prototype.startLevel = function(game) {
-    this.timer = game.time.events.loop(Phaser.Timer.SECOND/2, game.createHitBox, game);
+BasicGame.LevelManager.prototype.startLevel = function(game) {
+  this.timer = game.time.events.loop(Phaser.Timer.SECOND/2, game.createHitBox, game);
 };
 
-LevelManager.prototype.stopLevel = function(game) {
+BasicGame.LevelManager.prototype.stopLevel = function(game) {
   game.time.events.remove(this.timer);
 };
 
-LevelManager.prototype.changeLevel = function(game) {
+BasicGame.LevelManager.prototype.changeLevel = function(game) {
   if (game.answer.length === 0) {
     if (this.subStage == game.answer_map[this.currentStage]["tokens"].length - 1) {
       this.subStage = 0;
@@ -135,6 +135,8 @@ LevelManager.prototype.changeLevel = function(game) {
         thisStage = 1;
 
       this.currentStage = "stage" + thisStage;
+
+      game.state.start('StoryScreen');
     }
     else {
       this.subStage++;
@@ -143,6 +145,8 @@ LevelManager.prototype.changeLevel = function(game) {
     game.updateStage();
   }
 };
+
+var level = new BasicGame.LevelManager(this);
 /**/
 
 BasicGame.Game.prototype = {
@@ -151,10 +155,14 @@ BasicGame.Game.prototype = {
 
   },
 
-  create: function () {
+  create: function() {
+    this.start();
+  },
+
+  start: function () {
 
     this.setUpGame();
-    this.backdrop = this.add.sprite(0,0,"backdrop");
+    this.backdrop = this.add.sprite(0, 0, "backdrop");
     this.backdrop.width = this.world.width;
     this.backdrop.height = this.world.height;
 
@@ -173,13 +181,13 @@ BasicGame.Game.prototype = {
     this.wallgroup.add(this.createWall(this.world.width, 0));
 
     this.popSound = this.add.audio('pop');
-    this.music = this.add.audio('music');
-    this.music.loop = true;
-    this.music.play();
+//    this.music = this.add.audio('music');
+//    this.music.loop = true;
+//    this.music.play();
 
     this.gameUI = new GameUI(this);
     this.gameUI.updateHeart(this);
-    this.level = new LevelManager(this);
+
     this.updateStage();
 
     // Show FPS
@@ -189,7 +197,7 @@ BasicGame.Game.prototype = {
     );
 
     this.i = 0;
-    this.level.startLevel(this);
+    level.startLevel(this);
   },
 
   setUpGame: function () {
@@ -282,7 +290,7 @@ BasicGame.Game.prototype = {
   updateStage: function () {
 
     //Change Required Answer with the currentStage and subStage values
-    this.answer = this.answer_map[this.level.currentStage]["tokens"][this.level.subStage].slice();
+    this.answer = this.answer_map[level.currentStage]["tokens"][level.subStage].slice();
 
     this.gameUI.updateUI(this);
 
@@ -307,7 +315,7 @@ BasicGame.Game.prototype = {
       token_map = this.answer[0];
     }
     else {
-      var tokens = this.stages[this.level.currentStage]["tokens"][this.level.subStage];
+      var tokens = this.stages[level.currentStage]["tokens"][level.subStage];
       token_map = this.token_group_map[tokens][this.rnd.integerInRange(0,this.token_group_map[tokens].length-1)];
     }
 
@@ -316,7 +324,7 @@ BasicGame.Game.prototype = {
     var hit = this.hitBoxGroup.getFirstExists(false);
 
     if(!hit) {
-        hit = new HitBox(this.game, frame, token_map);
+      hit = new HitBox(this.game, frame, token_map);
     }
 
     hit.setUp(frame, token_map, this);
@@ -360,7 +368,7 @@ BasicGame.Game.prototype = {
       if (this.answer.length === 0) {
         this.time.events.add(Phaser.Timer.SECOND * 2,
                              function() {
-                               this.level.changeLevel(this);
+                               level.changeLevel(this);
                                this.gameUI.destroyChars();
                              },
                              this);
