@@ -95,7 +95,7 @@ GameUI.prototype.updateUI = function(game) {
     game.menu_sprites[ans].tint = 0x555555;
 
   }
-}
+};
 /**/
 
 BasicGame.Game.prototype = {
@@ -291,12 +291,13 @@ BasicGame.Game.prototype = {
 //      item.kill();
       item.alpha = 1;
       var tween = this.add.tween(item).to(
-        { x: this.menu_x_pos[this.i++]+32, y: this.world.height - 64 + 32 },
+        { x: this.menu_x_pos[this.i++]+32, y: this.world.height - 64 + 28 },
         1000,
         Phaser.Easing.Cubic.Out,
         true
       ).to(
-        {angle: 0},
+        {angle: 0,
+        x: this.menu_x_pos[this.i-1]+32, y: this.world.height - 64 + 28 },
         1000,
         Phaser.Easing.Elastic.Out
       );
