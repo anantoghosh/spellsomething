@@ -182,9 +182,9 @@ BasicGame.Game.prototype = {
     this.wallgroup.add(this.createWall(this.world.width, 0));
 
     this.popSound = this.add.audio('pop');
-//    this.music = this.add.audio('music');
-//    this.music.loop = true;
-//    this.music.play();
+    this.music = this.add.audio('music');
+    this.music.loop = true;
+    this.music.play();
 
     this.gameUI = new GameUI(this);
     this.gameUI.updateHeart(this);
