@@ -382,6 +382,9 @@ BasicGame.Game.prototype = {
     }
     else {
       this.health--;
+      if (this.health == 0) {
+        this.gameOver();
+      }
       item.body.gravity.y = 1500;
       item.body.velocity.x = Math.floor((Math.random()*2)-1)?-500:500;
       item.body.velocity.y = -600;
@@ -417,8 +420,17 @@ BasicGame.Game.prototype = {
 
   },
 
+  gameOver: function() {
+    this.gameOverScreen = this.add.sprite(10, this.world.height/2 - 100, "gameover");
+    this.gameOverScreen.width = this.world.width - 20;
+    this.gameOverScreen.height = this.gameOverScreen.width / 2.2;
+  },
+
   shutdown: function() {
-    this.music.destroy();
+    if(this.music)
+      this.music.destroy();
+    if(this.gameOverScreen)
+      this.gameOverScreen.destroy();
   },
 
 };
