@@ -96,7 +96,7 @@ GameUI.prototype.updateUI = function(game) {
 
   for(var ans=0; ans<game.answer.length; ans++) {
 
-    frame = game.sprite_map[game.answer[ans]][0];
+    frame = level.sprite_map[game.answer[ans]][0];
     game.menu_x_pos[ans] = game.menu_x_pos[0] + ans * sprite_width;
     this.menu_sprites[ans] = game.add.sprite(game.menu_x_pos[ans], game.world.height - 64, "alphabets", frame);
 //    this.menu_sprites[ans].anchor.setTo(0.5, 0.5);
@@ -112,6 +112,76 @@ Level Manager
 BasicGame.LevelManager = function(game) {
   this.currentStage = "stage1";
   this.subStage = 0;
+
+  this.sprite_map = {
+      "a": [0],
+      "b": [1],
+      "c": [2],
+      "d": [3],
+      "e": [4],
+      "f": [5],
+      "g": [6],
+      "h": [7],
+      "i": [8],
+      "j": [9],
+      "k": [10],
+      "l": [11],
+      "m": [12],
+      "n": [13],
+      "o": [14],
+      "p": [15],
+      "q": [16],
+      "r": [17],
+      "s": [18],
+      "t": [19],
+      "u": [20],
+      "v": [21],
+      "w": [22],
+      "x": [23],
+      "y": [24],
+      "z": [25],
+      "zero": [26],
+      "one": [27],
+      "two": [28],
+      "three": [29],
+      "four": [30],
+      "five": [31],
+      "six": [32],
+      "seven": [33],
+      "eight": [34],
+      "nine": [35],
+    };
+
+    this.token_group_map = {
+      "numbers": ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"],
+      "alphabets": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
+    };
+
+    this.stages = {
+      "stage1": {
+        "start_text": "something something",
+        "tokens": ["alphabets"],
+        "win_text": "Your getting smarter padwan",
+        "lose_text": "Boo hoo",
+        "image": "happy",
+      },
+      "stage2": {
+        "start_text": "something something",
+        "tokens": ["alphabets"],
+        "win_text": "Your getting smarter padwan",
+        "lose_text": "Boo hoo",
+        "image": "fish",
+      },
+    };
+
+    this.answer_map = {
+      "stage1": {
+        "tokens": [["h", "a", "p", "p", "y"]],
+      },
+      "stage2": {
+        "tokens": [["f", "i", "s", "h"]],
+      },
+    };
 };
 
 //BasicGame.LevelManager.prototype.constructor = LevelManager;
@@ -126,7 +196,7 @@ BasicGame.LevelManager.prototype.stopLevel = function(game) {
 
 BasicGame.LevelManager.prototype.changeLevel = function(game) {
   if (game.answer.length === 0) {
-    if (this.subStage == game.answer_map[this.currentStage]["tokens"].length - 1) {
+    if (this.subStage == level.answer_map[this.currentStage]["tokens"].length - 1) {
       this.subStage = 0;
       var thisStage = + this.currentStage.match(/\d+/g)[0];
       thisStage++;
@@ -203,74 +273,6 @@ BasicGame.Game.prototype = {
 
   setUpGame: function () {
     this.time.deltaCap = 0.02;
-    this.sprite_map = {
-      "a": [0],
-      "b": [1],
-      "c": [2],
-      "d": [3],
-      "e": [4],
-      "f": [5],
-      "g": [6],
-      "h": [7],
-      "i": [8],
-      "j": [9],
-      "k": [10],
-      "l": [11],
-      "m": [12],
-      "n": [13],
-      "o": [14],
-      "p": [15],
-      "q": [16],
-      "r": [17],
-      "s": [18],
-      "t": [19],
-      "u": [20],
-      "v": [21],
-      "w": [22],
-      "x": [23],
-      "y": [24],
-      "z": [25],
-      "zero": [26],
-      "one": [27],
-      "two": [28],
-      "three": [29],
-      "four": [30],
-      "five": [31],
-      "six": [32],
-      "seven": [33],
-      "eight": [34],
-      "nine": [35],
-    };
-
-    this.token_group_map = {
-      "numbers": ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"],
-      "alphabets": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
-    };
-
-    this.stages = {
-      "stage1": {
-        "start_text": "something something",
-        "tokens": ["alphabets", "alphabets"],
-        "win_text": "Your getting smarter padwan",
-        "lose_text": "Boo hoo",
-      },
-      "stage2": {
-        "start_text": "something something",
-        "tokens": ["alphabets", "alphabets"],
-        "win_text": "Your getting smarter padwan",
-        "lose_text": "Boo hoo",
-      },
-    };
-
-    this.answer_map = {
-      "stage1": {
-        "tokens": [["s", "p", "e", "l", "l"], ["h", "a", "p", "p", "y"]],
-      },
-      "stage2": {
-        "tokens": [["s", "m", "a", "r", "t"], ["i", "d", "i", "o", "t"]],
-      },
-    };
-
 //    this.currentStage = "stage1";
 //    this.subStage = 0;
     this.health = 3;
@@ -291,7 +293,7 @@ BasicGame.Game.prototype = {
   updateStage: function () {
 
     //Change Required Answer with the currentStage and subStage values
-    this.answer = this.answer_map[level.currentStage]["tokens"][level.subStage].slice();
+    this.answer = level.answer_map[level.currentStage]["tokens"][level.subStage].slice();
 
     this.gameUI.updateUI(this);
 
@@ -316,11 +318,11 @@ BasicGame.Game.prototype = {
       token_map = this.answer[0];
     }
     else {
-      var tokens = this.stages[level.currentStage]["tokens"][level.subStage];
-      token_map = this.token_group_map[tokens][this.rnd.integerInRange(0,this.token_group_map[tokens].length-1)];
+      var tokens = level.stages[level.currentStage]["tokens"][level.subStage];
+      token_map = level.token_group_map[tokens][this.rnd.integerInRange(0,level.token_group_map[tokens].length-1)];
     }
 
-    var frame = this.sprite_map[token_map][0];
+    var frame = level.sprite_map[token_map][0];
 
     var hit = this.hitBoxGroup.getFirstExists(false);
 

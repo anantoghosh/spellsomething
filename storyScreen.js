@@ -8,7 +8,12 @@ BasicGame.StoryScreen.prototype = {
   },
 
   create: function() {
-    this.add.sprite(0, 0, "happy");
+//    console.log(BasicGame);
+//    console.log(BasicGame.Game);
+//    console.log(level);
+//    console.log(this.LevelManager);
+    var image = level.stages[level.currentStage]["image"];
+    this.currentImage = this.add.sprite(0, 0, image);
   },
 
   update: function() {
@@ -19,5 +24,9 @@ BasicGame.StoryScreen.prototype = {
 
   startGame: function() {
     this.state.start('Game');
+  },
+
+  shutdown: function() {
+    this.currentImage.destroy();
   },
 }
