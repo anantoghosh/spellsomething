@@ -14,7 +14,7 @@ HitBox = function (game, frame, value) {
   var bubble = game.add.sprite(0, 0, "bubble");
   bubble.anchor.setTo(0.5, 0.5);
   bubble.tint = Math.random() * 0xffffff;
-  bubble.alpha = 0.6;
+  bubble.alpha = 0.5;
   bubble.scale.setTo(1.2,1.2);
   game.add.tween(bubble.scale).to({x:1.1, y: 1.1}, 400, Phaser.Easing.Linear.None, true, 0, 1000, true);
   this.addChild(bubble);
@@ -187,7 +187,11 @@ BasicGame.LevelManager = function(game) {
 //BasicGame.LevelManager.prototype.constructor = LevelManager;
 
 BasicGame.LevelManager.prototype.startLevel = function(game) {
-  this.timer = game.time.events.loop(Phaser.Timer.SECOND/2, game.createHitBox, game);
+//  this.timer = game.time.events.loop(Phaser.Timer.SECOND/2, game.createHitBox, game);
+  if(game.counter % 30 == 0) {
+    game.createHitBox();
+    game.counter = 0;
+  }
 };
 
 BasicGame.LevelManager.prototype.stopLevel = function(game) {
@@ -231,7 +235,7 @@ BasicGame.Game.prototype = {
   },
 
   start: function () {
-
+    this.counter = 0;
     this.setUpGame();
     this.backdrop = this.add.sprite(0, 0, "backdrop");
     this.backdrop.width = this.world.width;
@@ -268,7 +272,7 @@ BasicGame.Game.prototype = {
     );
 
     this.i = 0;
-    level.startLevel(this);
+//    level.startLevel(this);
   },
 
   setUpGame: function () {
@@ -278,7 +282,7 @@ BasicGame.Game.prototype = {
     this.health = 3;
   },
 
-  particleBurst: function(pointer) {
+  particleBurst: function(pointer, tint) {
 
     //  Position the emitter where the mouse/touch event was
     this.emitter.setRotation(0, 0);
@@ -341,12 +345,15 @@ BasicGame.Game.prototype = {
     this.gameUI.poppedChars.push(item);
     this.text = item.value;
     var found = this.answer.indexOf(item.value);
+    item.children[0].destroy();
+    this.popSound.play();
+    this.particleBurst(item);
+    item.alpha = 1;
+    item.body.enablebody = false;
+    this.hitBoxGroup.remove(item);
+    this.world.add(item);
     if(item.value == this.answer[0]) {
       this.answer.splice(0, 1);
-      item.children[0].destroy();
-      this.popSound.play();
-      this.particleBurst(item);
-      item.alpha = 1;
       var tween = this.add.tween(item).to(
         { x: this.menu_x_pos[this.i++]+32, y: this.world.height - 64 + 28 },
         1000,
@@ -364,10 +371,6 @@ BasicGame.Game.prototype = {
         item.body.angularVelocity = 0;
       }, item);
 
-      item.body.enablebody = false;
-      this.hitBoxGroup.remove(item);
-      this.world.add(item);
-
       if (this.answer.length === 0) {
         this.time.events.add(Phaser.Timer.SECOND * 2,
                              function() {
@@ -379,6 +382,15 @@ BasicGame.Game.prototype = {
     }
     else {
       this.health--;
+      item.body.gravity.y = 1500;
+      item.body.velocity.x = Math.floor((Math.random()*2)-1)?-500:500;
+      item.body.velocity.y = -600;
+      this.time.events.add(Phaser.Timer.SECOND * 2,
+                             function() {
+                               item.destroy();
+                               console.log("item " + item);
+                             },
+                             this);
       this.gameUI.destroyHeart();
     }
   },
@@ -391,6 +403,10 @@ BasicGame.Game.prototype = {
 
     this.physics.arcade.collide(this.hitBoxGroup);
     this.physics.arcade.collide(this.hitBoxGroup, this.wallgroup);
+
+    level.startLevel(this);
+    this.counter++;
+//    console.log(this.counter);
   },
 
   render: function () {
