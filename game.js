@@ -24,15 +24,29 @@ HitBox.prototype = Object.create(Phaser.Sprite.prototype);
 HitBox.prototype.constructor = HitBox;
 
 HitBox.prototype.setUp = function(frame, token_map, game) {
-  this.reset(32, game.rnd.integerInRange(game.world.height + 32,game.world.height + 64));
   this.value = token_map;
   this.frame = frame;
   this.enableBody = true;
   this.outOfBoundsKill = true;
   this.checkWorldBounds = true;
   game.physics.enable(this, Phaser.Physics.ARCADE);
-  this.body.velocity.x = game.rnd.integerInRange(-250, 250);
-  this.body.angularVelocity = game.rnd.integerInRange(-360, 360);
+
+  var side = Math.floor(Math.random()*3+1);
+  console.log(side);
+
+  if(side == 2) {
+    this.reset(game.rnd.integerInRange(32,game.world.width-32), game.rnd.integerInRange(game.world.height + 32,game.world.height + 64));
+    this.body.velocity.x = game.rnd.integerInRange(-250, 250);
+  }
+  else if (side == 1) {
+    this.reset(-28, game.rnd.integerInRange(game.world.height - 64, game.world.height));
+    this.body.velocity.x = game.rnd.integerInRange(100, 250);
+  }
+  else {
+    this.reset(game.world.width + 28, game.rnd.integerInRange(game.world.height - 64, game.world.height));
+    this.body.velocity.x = game.rnd.integerInRange(-100, -250);
+  }
+  this.body.angularVelocity = game.rnd.integerInRange(-100, 100);
 //  this.body.setSize(64, 64);
   this.body.velocity.y = game.rnd.integerInRange(-200, -100);
 //  this.scale.setTo(1,);
@@ -252,8 +266,8 @@ BasicGame.Game.prototype = {
 
     //Colliding Side Walls
     this.wallgroup = this.add.group();
-    this.wallgroup.add(this.createWall(-1, 0));
-    this.wallgroup.add(this.createWall(this.world.width, 0));
+    this.wallgroup.add(this.createWall(-1, 0), "left");
+    this.wallgroup.add(this.createWall(this.world.width, 0), "right");
 
     this.popSound = this.add.audio('pop');
     this.music = this.add.audio('music');
@@ -303,12 +317,16 @@ BasicGame.Game.prototype = {
 
   },
 
-  createWall: function (x, y) {
+  createWall: function (x, y, side) {
     var wall = this.add.sprite(x, y);
     wall.height = this.world.height + 64;
     wall.width = 1;
     this.physics.enable(wall, Phaser.Physics.ARCADE);
     wall.body.immovable = true;
+//    if (side == "left")
+//      wall.body.checkCollision.left = false;
+//    else if (side == "right")
+//      wall.body.checkCollision.right = false;
     wall.renderable = false;
     return wall;
   },
