@@ -31,6 +31,7 @@ BasicGame.Preloader.prototype = {
     this.load.image('button', 'assets/grey_button02.png');
     this.load.audio('pop', ['sounds/pop.ogg', 'sounds/pop.wav']);
     this.load.audio('music', ['sounds/Ambler.ogg', 'sounds/Ambler.wav']);
+    this.load.audio('correct', ['sounds/correct.ogg', 'sounds/correct.wav']);
     this.load.image('backdrop', 'assets/backdrop.jpg');
     this.load.image('blueglow','assets/blue_glow.png');
     this.load.image('bubble','assets/circle.png');
@@ -38,6 +39,8 @@ BasicGame.Preloader.prototype = {
     this.load.image('happy', 'assets/happy.jpg');
     this.load.image('fish', 'assets/fish.jpg');
     this.load.image('gameover', 'assets/gameover.png');
+    this.load.image('play', 'assets/play.png');
+    this.load.image('title', 'assets/title.png');
     //this.load.audio('titleMusic', ['audio/main_menu.mp3']);
     //  + lots of other required assets here
 

@@ -270,9 +270,10 @@ BasicGame.Game.prototype = {
     this.wallgroup.add(this.createWall(this.world.width, 0), "right");
 
     this.popSound = this.add.audio('pop');
-    this.music = this.add.audio('music');
-    this.music.loop = true;
-    this.music.play();
+    this.correctSound = this.add.audio('correct');
+//    this.music = this.add.audio('music');
+//    this.music.loop = true;
+//    this.music.play();
 
     this.gameUI = new GameUI(this);
     this.gameUI.updateHeart(this);
@@ -384,10 +385,11 @@ BasicGame.Game.prototype = {
         Phaser.Easing.Elastic.Out
       );
       this.add.tween(item.scale).to( { x: 1, y: 1}, 1000, Phaser.Easing.Cubic.Out, true);
-      tween.onComplete.add(function(){
+      tween.onComplete.add(function(item){
         item.body.velocity.setTo(0, 0);
         item.body.angularVelocity = 0;
-      }, item);
+        this.correctSound.play();
+      }, this);
 
       if (this.answer.length === 0) {
         this.time.events.add(Phaser.Timer.SECOND * 2,
