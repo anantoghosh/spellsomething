@@ -30,6 +30,7 @@ BasicGame.Preloader.prototype = {
     this.load.spritesheet('alphabets', 'assets/alphabets2.png', 64, 58);
     this.load.image('button', 'assets/grey_button02.png');
     this.load.audio('pop', ['sounds/pop.ogg', 'sounds/pop.wav']);
+    this.load.audio('mainmusic', ['sounds/mainmenu.ogg', 'sounds/mainmenu.wav']);
     this.load.audio('music', ['sounds/Ambler.ogg', 'sounds/Ambler.wav']);
     this.load.audio('correct', ['sounds/correct.ogg', 'sounds/correct.wav']);
     this.load.image('backdrop', 'assets/backdrop.jpg');
