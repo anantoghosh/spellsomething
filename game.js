@@ -13,8 +13,8 @@ HitBox = function (game, frame, value) {
   //Bubble Container Sprite as child
   var bubble = game.add.sprite(0, 0, "bubble");
   bubble.anchor.setTo(0.5, 0.5);
-  bubble.tint = Math.random() * 0xffffff;
-  bubble.alpha = 0.5;
+//  bubble.tint = Math.random() * 0xffffff;
+  bubble.alpha = 0.6;
   bubble.scale.setTo(1.2,1.2);
   game.add.tween(bubble.scale).to({x:1.1, y: 1.1}, 400, Phaser.Easing.Linear.None, true, 0, 1000, true);
   this.addChild(bubble);
@@ -31,27 +31,27 @@ HitBox.prototype.setUp = function(frame, token_map, game) {
   this.checkWorldBounds = true;
   game.physics.enable(this, Phaser.Physics.ARCADE);
 
-  var side = Math.floor(Math.random()*3+1);
-  console.log(side);
-
-  if(side == 2) {
+//  var side = Math.floor(Math.random()*3+1);
+////  console.log(side);
+//
+//  if(side == 2) {
     this.reset(game.rnd.integerInRange(32,game.world.width-32), game.rnd.integerInRange(game.world.height + 32,game.world.height + 64));
-    this.body.velocity.x = game.rnd.integerInRange(-250, 250);
-  }
-  else if (side == 1) {
-    this.reset(-28, game.rnd.integerInRange(game.world.height - 64, game.world.height));
-    this.body.velocity.x = game.rnd.integerInRange(100, 250);
-  }
-  else {
-    this.reset(game.world.width + 28, game.rnd.integerInRange(game.world.height - 64, game.world.height));
-    this.body.velocity.x = game.rnd.integerInRange(-100, -250);
-  }
+    this.body.velocity.x = game.rnd.integerInRange(-50, 50);
+//  }
+//  else if (side == 1) {
+//    this.reset(-28, game.rnd.integerInRange(game.world.height - 64, game.world.height));
+//    this.body.velocity.x = game.rnd.integerInRange(100, 250);
+//  }
+//  else {
+//    this.reset(game.world.width + 28, game.rnd.integerInRange(game.world.height - 64, game.world.height));
+//    this.body.velocity.x = game.rnd.integerInRange(-100, -250);
+//  }
   this.body.angularVelocity = game.rnd.integerInRange(-100, 100);
 //  this.body.setSize(64, 64);
   this.body.velocity.y = game.rnd.integerInRange(-200, -100);
 //  this.scale.setTo(1,);
   this.anchor.setTo(0.5, 0.5);
-  this.body.bounce.set(1);
+  this.body.bounce.set(0.5);
   this.inputEnabled = true;
   this.events.onInputDown.add(game.hitBoxClicked, game);
 };
@@ -69,7 +69,8 @@ GameUI = function (game) {
 //  game.bar.y = game.world.height - game.bar.height;
   this.poppedChars = [];
   this.menu_sprites = [];
-  console.log("gameui called");
+  this.heart = [];
+//  console.log("gameui called");
 };
 
 GameUI.prototype.destroyChars = function(game) {
@@ -80,12 +81,22 @@ GameUI.prototype.destroyChars = function(game) {
 };
 
 GameUI.prototype.updateHeart = function(game) {
-  this.heart = [];
+  //Remove any Previous sprites
+  if(this.heart.length !== 0){
+    for(var i=0; i<this.heart.length; i++) {
+      this.heart[i].destroy();
+    }
+  }
+
   for(var i=0; i< game.health; i++) {
-    this.heart[i] = game.add.sprite(game.world.width - i*24 - 12, 12, 'heart');
-    this.heart[i].width = 24;
-    this.heart[i].height = 24;
+    this.heart[i] = game.add.sprite(game.world.width - i*32 - 16, 16, 'heart');
+//    this.heart[i].width = 24;
+//    this.heart[i].height = 24;
+    this.heart[i].scale.setTo(0.5, 0.5);
     this.heart[i].anchor.setTo(0.5, 0.5);
+    this.heart[i].angle = game.rnd.integerInRange(-10, 10);
+    var tween = game.add.tween(this.heart[i].scale).to({x: 0.4, y:0.4}, 100, Phaser.Easing.Elastic.InOut, true, 500 * i + 500).to({x: 0.5, y:0.5}, 50, Phaser.Easing.Elastic.InOut, true, 0).loop();
+//    tween.loop();
   }
 };
 
@@ -126,7 +137,7 @@ Level Manager
 BasicGame.LevelManager = function(game) {
   this.currentStage = "stage1";
   this.subStage = 0;
-
+  console.log("Level Manager");
   this.sprite_map = {
       "a": [0],
       "b": [1],
@@ -181,7 +192,7 @@ BasicGame.LevelManager = function(game) {
       },
       "stage2": {
         "start_text": "something something",
-        "tokens": ["alphabets"],
+        "tokens": ["alphabets", "alphabets", "alphabets", "alphabets"],
         "win_text": "Your getting smarter padwan",
         "lose_text": "Boo hoo",
         "image": "fish",
@@ -193,7 +204,7 @@ BasicGame.LevelManager = function(game) {
         "tokens": [["h", "a", "p", "p", "y"]],
       },
       "stage2": {
-        "tokens": [["f", "i", "s", "h"]],
+        "tokens": [["f", "i", "s", "h"], ["a", "r", "e"], ["c", "o", "l", "d"], ["b", "l", "o", "o", "d", "e", "d"]],
       },
     };
 };
@@ -230,8 +241,7 @@ BasicGame.LevelManager.prototype.changeLevel = function(game) {
     else {
       this.subStage++;
     }
-    game.i = 0;
-    game.updateStage();
+    game.start();
   }
 };
 
@@ -245,12 +255,6 @@ BasicGame.Game.prototype = {
   },
 
   create: function() {
-    this.start();
-  },
-
-  start: function () {
-    this.counter = 0;
-    this.setUpGame();
     this.backdrop = this.add.sprite(0, 0, "backdrop");
     this.backdrop.width = this.world.width;
     this.backdrop.height = this.world.height;
@@ -273,12 +277,8 @@ BasicGame.Game.prototype = {
     this.correctSound = this.add.audio('correct');
     this.music = this.add.audio('music');
     this.music.loop = true;
-    this.music.play();
 
     this.gameUI = new GameUI(this);
-    this.gameUI.updateHeart(this);
-
-    this.updateStage();
 
     // Show FPS
     this.game.time.advancedTiming = true;
@@ -286,15 +286,37 @@ BasicGame.Game.prototype = {
         10, 10, '', { fontSize: '20px', fill: '#ffffff' }
     );
 
-    this.i = 0;
-//    level.startLevel(this);
+    this.time.deltaCap = 0.02;
+
+    this.start();
   },
 
-  setUpGame: function () {
-    this.time.deltaCap = 0.02;
-//    this.currentStage = "stage1";
-//    this.subStage = 0;
+  reset: function() {
+//    this.hitBoxGroup.destroy(true);
+//    this.hitBoxGroup = this.add.group();
+    this.hitBoxGroup.forEachExists(function(item){item.kill();}, this)
+    this.gameover = false;
+    this.game.paused = false;
+    this.gameUI.destroyChars();
+    this.backdrop.tint = 0xffffff;
+    if(this.gameOverScreen)
+      this.gameOverScreen.destroy();
+  },
+
+  start: function () {
+
     this.health = 3;
+    this.counter = 0;
+    this.music.play();
+
+    this.answer = level.answer_map[level.currentStage]["tokens"][level.subStage].slice();
+
+    this.gameUI.updateHeart(this);
+    this.gameUI.updateUI(this);
+
+
+    this.i = 0;
+//    level.startLevel(this);
   },
 
   particleBurst: function(pointer, tint) {
@@ -309,14 +331,6 @@ BasicGame.Game.prototype = {
 
   },
 
-  updateStage: function () {
-
-    //Change Required Answer with the currentStage and subStage values
-    this.answer = level.answer_map[level.currentStage]["tokens"][level.subStage].slice();
-
-    this.gameUI.updateUI(this);
-
-  },
 
   createWall: function (x, y, side) {
     var wall = this.add.sprite(x, y);
@@ -351,6 +365,7 @@ BasicGame.Game.prototype = {
 
     if(!hit) {
       hit = new HitBox(this.game, frame, token_map);
+      console.log("NEW CREATED " + hit);
     }
 
     hit.setUp(frame, token_map, this);
@@ -361,16 +376,16 @@ BasicGame.Game.prototype = {
   },
 
   hitBoxClicked: function (item, pointer) {
+    this.hitBoxGroup.remove(item);
+    this.world.add(item);
     this.gameUI.poppedChars.push(item);
     this.text = item.value;
     var found = this.answer.indexOf(item.value);
-    item.children[0].destroy();
+    item.children[0].kill();
     this.popSound.play();
     this.particleBurst(item);
     item.alpha = 1;
     item.body.enablebody = false;
-    this.hitBoxGroup.remove(item);
-    this.world.add(item);
     if(item.value == this.answer[0]) {
       this.answer.splice(0, 1);
       var tween = this.add.tween(item).to(
@@ -401,20 +416,22 @@ BasicGame.Game.prototype = {
       }
     }
     else {
+      item.body.gravity.y = 1500;
+      item.body.velocity.x = Math.floor((Math.random()*2)-1)?-500:500;
+      item.body.velocity.y = -600;
+      item.outOfBoundsKill = true;
+      item.checkWorldBounds = true;
+//      this.time.events.add(Phaser.Timer.SECOND * 2,
+//                             function() {
+//                               item.kill();
+////                               console.log("item " + item);
+//                             },
+//                             this);
+      this.gameUI.destroyHeart();
       this.health--;
       if (this.health == 0) {
         this.gameOver();
       }
-      item.body.gravity.y = 1500;
-      item.body.velocity.x = Math.floor((Math.random()*2)-1)?-500:500;
-      item.body.velocity.y = -600;
-      this.time.events.add(Phaser.Timer.SECOND * 2,
-                             function() {
-                               item.destroy();
-                               console.log("item " + item);
-                             },
-                             this);
-      this.gameUI.destroyHeart();
     }
   },
 
@@ -441,16 +458,38 @@ BasicGame.Game.prototype = {
   },
 
   gameOver: function() {
+    this.gameover = true;
     this.gameOverScreen = this.add.sprite(10, this.world.height/2 - 100, "gameover");
     this.gameOverScreen.width = this.world.width - 20;
     this.gameOverScreen.height = this.gameOverScreen.width / 2.2;
+    this.backdrop.tint = 0x333333;
+    this.music.stop();
+    this.game.paused = true;
+    this.input.onDown.add(function(){
+      if(this.gameover == true) {
+        this.reset();
+        this.start();
+      }
+    }, this);
+
   },
 
   shutdown: function() {
-    if(this.music)
+//    if(this.music)
       this.music.destroy();
     if(this.gameOverScreen)
       this.gameOverScreen.destroy();
+//    if(this.wallgroup)
+      this.wallgroup.destroy(true, true);
+      this.answer = null;
+      this.backdrop.destroy();
+      this.correctSound.destroy();
+      this.emitter.destroy();
+      this.fpsText.destroy();
+      this.hitBoxGroup.destroy(true, true);
+      this.popSound.destroy();
+      this.gameUI.destroyChars();
+    console.log("destroyed");
   },
 
 };
