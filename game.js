@@ -240,8 +240,9 @@ BasicGame.LevelManager.prototype.changeLevel = function(game) {
     }
     else {
       this.subStage++;
+      game.start();
     }
-    game.start();
+
   }
 };
 
@@ -277,6 +278,7 @@ BasicGame.Game.prototype = {
     this.correctSound = this.add.audio('correct');
     this.music = this.add.audio('music');
     this.music.loop = true;
+    this.music.play();
 
     this.gameUI = new GameUI(this);
 
@@ -301,13 +303,13 @@ BasicGame.Game.prototype = {
     this.backdrop.tint = 0xffffff;
     if(this.gameOverScreen)
       this.gameOverScreen.destroy();
+    this.music.play();
   },
 
   start: function () {
 
     this.health = 3;
     this.counter = 0;
-    this.music.play();
 
     this.answer = level.answer_map[level.currentStage]["tokens"][level.subStage].slice();
 
@@ -476,7 +478,6 @@ BasicGame.Game.prototype = {
 
   shutdown: function() {
 //    if(this.music)
-      this.music.destroy();
     if(this.gameOverScreen)
       this.gameOverScreen.destroy();
 //    if(this.wallgroup)
@@ -488,6 +489,7 @@ BasicGame.Game.prototype = {
       this.fpsText.destroy();
       this.hitBoxGroup.destroy(true, true);
       this.popSound.destroy();
+      this.music.destroy();
       this.gameUI.destroyChars();
     console.log("destroyed");
   },
