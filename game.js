@@ -271,9 +271,9 @@ BasicGame.Game.prototype = {
 
     this.popSound = this.add.audio('pop');
     this.correctSound = this.add.audio('correct');
-//    this.music = this.add.audio('music');
-//    this.music.loop = true;
-//    this.music.play();
+    this.music = this.add.audio('music');
+    this.music.loop = true;
+    this.music.play();
 
     this.gameUI = new GameUI(this);
     this.gameUI.updateHeart(this);
