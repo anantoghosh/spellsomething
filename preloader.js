@@ -42,6 +42,7 @@ BasicGame.Preloader.prototype = {
     this.load.image('gameover', 'assets/gameover.png');
     this.load.image('play', 'assets/play.png');
     this.load.image('title', 'assets/title.png');
+    this.load.image('button', 'assets/blue_button02.png');
     //this.load.audio('titleMusic', ['audio/main_menu.mp3']);
     //  + lots of other required assets here
 

@@ -36,7 +36,7 @@ HitBox.prototype.setUp = function(frame, token_map, game) {
 //
 //  if(side == 2) {
     this.reset(game.rnd.integerInRange(32,game.world.width-32), game.rnd.integerInRange(game.world.height + 32,game.world.height + 64));
-    this.body.velocity.x = game.rnd.integerInRange(-50, 50);
+    this.body.velocity.x = game.rnd.integerInRange(-250, 250);
 //  }
 //  else if (side == 1) {
 //    this.reset(-28, game.rnd.integerInRange(game.world.height - 64, game.world.height));
@@ -46,12 +46,12 @@ HitBox.prototype.setUp = function(frame, token_map, game) {
 //    this.reset(game.world.width + 28, game.rnd.integerInRange(game.world.height - 64, game.world.height));
 //    this.body.velocity.x = game.rnd.integerInRange(-100, -250);
 //  }
-  this.body.angularVelocity = game.rnd.integerInRange(-100, 100);
+  this.body.angularVelocity = game.rnd.integerInRange(-250, 250);
 //  this.body.setSize(64, 64);
   this.body.velocity.y = game.rnd.integerInRange(-200, -100);
 //  this.scale.setTo(1,);
   this.anchor.setTo(0.5, 0.5);
-  this.body.bounce.set(0.5);
+  this.body.bounce.set(1);
   this.inputEnabled = true;
   this.events.onInputDown.add(game.hitBoxClicked, game);
 };
@@ -136,7 +136,6 @@ Level Manager
 */
 BasicGame.LevelManager = function(game) {
   this.currentStage = "stage1";
-  this.subStage = 0;
   console.log("Level Manager");
   this.sprite_map = {
       "a": [0],
@@ -185,7 +184,7 @@ BasicGame.LevelManager = function(game) {
     this.stages = {
       "stage1": {
         "start_text": "something something",
-        "tokens": ["alphabets"],
+        "tokens": ["alphabets", "alphabets", "alphabets", "alphabets", "alphabets", "alphabets"],
         "win_text": "Your getting smarter padwan",
         "lose_text": "Boo hoo",
         "image": "happy",
@@ -201,12 +200,13 @@ BasicGame.LevelManager = function(game) {
 
     this.answer_map = {
       "stage1": {
-        "tokens": [["h", "a", "p", "p", "y"]],
+        "tokens": [["a", "c", "a", "d", "e", "m", "y"], ["a", "c", "c", "e", "s", "s", "i", "b", "l", "e"], ["a", "c", "c", "i", "d", "e", "n", "t"], ["b", "e", "i", "g", "e"], ["b", "e", "l", "i", "e", "f"], ["c", "o", "l", "o", "g", "n", "e"], ["c", "o", "l", "o", "n", "e", "l"], ["c", "o", "l", "u", "m", "n"], ["d", "o", "u", "b", "l", "y"], ["d", "o", "u", "b", "t"], ["d", "r", "o", "p", "p", "e", "d"], ["e", "l", "e", "g", "a", "n", "t"], ["e", "l", "e", "m", "e", "n", "t"], ["f", "a", "s", "t", "e", "n"], ["f", "a", "t", "i", "g", "u", "e"], ["f", "e", "a", "s", "i", "b", "l", "e"], ["g", "o", "v", "e", "r", "n"], ["g", "o", "v", "e", "r", "n", "o", "r"], ["g", "r", "a", "m", "m", "a", "r"], ["h", "i", "p", "s", "t", "e", "r"], ["h", "o", "a", "x"], ["i", "n", "d", "u", "s", "t", "r", "y"], ["i", "n", "t", "e", "l"], ["i", "n", "t", "e", "r", "f", "e", "r", "e"], ["j", "e", "w", "e", "l", "r", "y"], ["j", "i", "g", "s", "a", "w"], ["j", "i", "n", "x", "e", "d"], ["k", "i", "o", "s", "k"], ["k", "n", "o", "w", "l", "e", "d", "g", "e"], ["k", "e", "r", "p", "l", "u", "n", "k"], ["l", "i", "a", "i", "s", "o", "n"], ["l", "i", "c", "e", "n", "s", "e"], ["l", "i", "c", "h", "e", "e"], ["m", "i", "s", "s", "p", "e", "l", "l"], ["m", "o", "n", "o", "g", "a", "m", "y"], ["s", "y", "l", "l", "a", "b", "l", "e"], ["n", "e", "c", "e", "s", "s", "a", "r", "y"], ["n", "e", "c", "k", "t", "i", "e"], ["n", "e", "g", "a", "t", "i", "v", "e"], ["o", "c", "c", "u", "r"], ["o", "c", "t", "o", "p", "u", "s"], ["o", "m", "i", "t", "t", "e", "d"], ["p", "r", "i", "o", "r", "i", "t", "y"], ["p", "r", "i", "v", "i", "l", "e", "g", "e"], ["p", "r", "o", "f", "a", "n", "i", "t", "y"], ["q", "u", "e", "u", "e"], ["q", "u", "i", "c", "k", "i", "e"], ["q", "u", "i", "e", "s", "c", "e", "n", "t"], ["r", "e", "p", "l", "e", "t", "e"], ["r", "e", "p", "e", "a", "t"], ["s", "e", "v", "e", "r", "a", "n", "c", "e"], ["s", "e", "w", "e", "r"], ["s", "k", "e", "p", "t", "i", "c", "a", "l"], ["t", "e", "m", "p", "o", "r", "a", "r", "y"], ["t", "e", "n", "t", "a", "t", "i", "v", "e"], ["t", "e", "r", "r", "a", "i", "n"], ["o", "r", "t", "h", "o", "d", "o", "x"], ["p", "a", "r", "a", "l", "l", "e", "l"], ["u", "p", "b", "e", "a", "t"], ["v", "a", "p", "o", "r", "i", "z", "e"], ["v", "a", "s", "e", "c", "t", "o", "m", "y"], ["w", "r", "e", "s", "t", "l", "e"], ["w", "r", "e", "t", "c", "h", "e", "d"], ["w", "r", "i", "n", "g", "i", "n", "g"], ["x", "e", "r", "o", "x"], ["x", "e", "n", "o", "n"], ["x", "y", "l", "e", "m"], ["y", "a", "c", "h", "t"], ["y", "a", "k"], ["y", "a", "r", "m", "u", "l", "k", "e"], ["z", "a", "p", "p", "e", "d"], ["z", "e", "a", "l", "o", "t"], ["z", "e", "a", "l", "o", "u", "s"]],
       },
       "stage2": {
         "tokens": [["f", "i", "s", "h"], ["a", "r", "e"], ["c", "o", "l", "d"], ["b", "l", "o", "o", "d", "e", "d"]],
       },
     };
+    this.subStage = Math.floor(Math.random() * this.answer_map.stage1.tokens.length-1);
 };
 
 //BasicGame.LevelManager.prototype.constructor = LevelManager;
@@ -239,7 +239,7 @@ BasicGame.LevelManager.prototype.changeLevel = function(game) {
       game.state.start('StoryScreen');
     }
     else {
-      this.subStage++;
+      this.subStage = this.subStage = Math.floor(Math.random() * this.answer_map.stage1.tokens.length-1);
       game.start();
     }
 
@@ -353,11 +353,12 @@ BasicGame.Game.prototype = {
 
     // 20% chance of getting a correct Hit Box
     var probability = Math.floor(Math.random()*11);
-    if (probability < 2 && this.answer.length !== 0) {
+    if (probability < 4 && this.answer.length !== 0) {
       token_map = this.answer[0];
     }
     else {
-      var tokens = level.stages[level.currentStage]["tokens"][level.subStage];
+//      var tokens = level.stages[level.currentStage]["tokens"][level.subStage];
+      var tokens = "alphabets";
       token_map = level.token_group_map[tokens][this.rnd.integerInRange(0,level.token_group_map[tokens].length-1)];
     }
 
@@ -479,18 +480,18 @@ BasicGame.Game.prototype = {
   shutdown: function() {
 //    if(this.music)
     if(this.gameOverScreen)
-      this.gameOverScreen.destroy();
+    this.gameOverScreen.destroy();
 //    if(this.wallgroup)
-      this.wallgroup.destroy(true, true);
-      this.answer = null;
-      this.backdrop.destroy();
-      this.correctSound.destroy();
-      this.emitter.destroy();
-      this.fpsText.destroy();
-      this.hitBoxGroup.destroy(true, true);
-      this.popSound.destroy();
-      this.music.destroy();
-      this.gameUI.destroyChars();
+    this.wallgroup.destroy(true, false);
+    this.answer = null;
+    this.backdrop.destroy();
+    this.correctSound.destroy();
+    this.emitter.destroy();
+    this.fpsText.destroy();
+    this.hitBoxGroup.destroy(true, false);
+    this.popSound.destroy();
+    this.music.destroy();
+    this.gameUI.destroyChars();
     console.log("destroyed");
   },
 
