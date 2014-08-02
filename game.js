@@ -36,7 +36,7 @@ HitBox.prototype.setUp = function(frame, token_map, game) {
 //
 //  if(side == 2) {
     this.reset(game.rnd.integerInRange(32,game.world.width-32), game.rnd.integerInRange(game.world.height + 32,game.world.height + 64));
-    this.body.velocity.x = game.rnd.integerInRange(-250, 250);
+    this.body.velocity.x = game.rnd.integerInRange(-300, 300);
 //  }
 //  else if (side == 1) {
 //    this.reset(-28, game.rnd.integerInRange(game.world.height - 64, game.world.height));
@@ -48,7 +48,7 @@ HitBox.prototype.setUp = function(frame, token_map, game) {
 //  }
   this.body.angularVelocity = game.rnd.integerInRange(-250, 250);
 //  this.body.setSize(64, 64);
-  this.body.velocity.y = game.rnd.integerInRange(-200, -100);
+  this.body.velocity.y = game.rnd.integerInRange(-300, -100);
 //  this.scale.setTo(1,);
   this.anchor.setTo(0.5, 0.5);
   this.body.bounce.set(1);
@@ -276,26 +276,33 @@ BasicGame.Game.prototype = {
 
     this.popSound = this.add.audio('pop');
     this.correctSound = this.add.audio('correct');
-    this.music = this.add.audio('music');
+    this.music = this.add.audio('mainmusic');
     this.music.loop = true;
     this.music.play();
 
     this.gameUI = new GameUI(this);
 
     // Show FPS
-    this.game.time.advancedTiming = true;
-    this.fpsText = this.game.add.text(
+//    this.game.time.advancedTiming = true;
+    this.scoreText = this.game.add.text(
         10, 10, '', { fontSize: '20px', fill: '#ffffff' }
     );
-
     this.time.deltaCap = 0.02;
-
+    this.health = 3;
+    this.score = 0;
+    this.scoreText.setText("Score: " + this.score);
+    this.timerbar = this.add.sprite(0, this.world.height - 10, 'timebar');
+    this.timerbar.height = 10;
+    this.timerbar.width = this.world.width;
     this.start();
   },
 
   reset: function() {
 //    this.hitBoxGroup.destroy(true);
 //    this.hitBoxGroup = this.add.group();
+    this.health = 3;
+    this.score = 0;
+    this.scoreText.setText("Score: " + this.score);
     this.hitBoxGroup.forEachExists(function(item){item.kill();}, this)
     this.gameover = false;
     this.game.paused = false;
@@ -303,14 +310,13 @@ BasicGame.Game.prototype = {
     this.backdrop.tint = 0xffffff;
     if(this.gameOverScreen)
       this.gameOverScreen.destroy();
+    this.timerbar.width = this.world.width;
     this.music.play();
   },
 
   start: function () {
 
-    this.health = 3;
     this.counter = 0;
-
     this.answer = level.answer_map[level.currentStage]["tokens"][level.subStage].slice();
 
     this.gameUI.updateHeart(this);
@@ -390,6 +396,10 @@ BasicGame.Game.prototype = {
     item.alpha = 1;
     item.body.enablebody = false;
     if(item.value == this.answer[0]) {
+      this.score++;
+      this.timerbar.width += 75;
+      if(this.timerbar.width > 320) this.timerbar.width = this.world.width;
+      this.scoreText.setText("Score: " + this.score);
       this.answer.splice(0, 1);
       var tween = this.add.tween(item).to(
         { x: this.menu_x_pos[this.i++]+32, y: this.world.height - 64 + 28 },
@@ -413,6 +423,7 @@ BasicGame.Game.prototype = {
         this.time.events.add(Phaser.Timer.SECOND * 2,
                              function() {
                                level.changeLevel(this);
+                               this.timerbar.width += 20;
                                this.gameUI.destroyChars();
                              },
                              this);
@@ -440,10 +451,13 @@ BasicGame.Game.prototype = {
 
   update: function () {
 
-    if (this.time.fps !== 0) {
-        this.fpsText.setText(this.time.fps);
+//    if (this.time.fps !== 0) {
+//        this.fpsText.setText(this.time.fps);
+//    }
+    this.timerbar.width -= 0.4;
+    if (this.timerbar.width <= 0.5) {
+        this.gameOver();
     }
-
     this.physics.arcade.collide(this.hitBoxGroup);
     this.physics.arcade.collide(this.hitBoxGroup, this.wallgroup);
 

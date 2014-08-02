@@ -26,23 +26,24 @@ BasicGame.Preloader.prototype = {
     this.load.setPreloadSprite(this.preloadBar);
 
     //  Here we load the rest of the assets our game needs.
-    this.load.spritesheet('blue', 'assets/blue.png', 32, 32);
+//    this.load.spritesheet('blue', 'assets/blue.png', 32, 32);
     this.load.spritesheet('alphabets', 'assets/alphabets2.png', 64, 58);
-    this.load.image('button', 'assets/grey_button02.png');
+//    this.load.image('button', 'assets/grey_button02.png');
     this.load.audio('pop', ['sounds/pop.ogg', 'sounds/pop.wav']);
     this.load.audio('mainmusic', ['sounds/mainmenu.ogg', 'sounds/mainmenu.wav']);
-    this.load.audio('music', ['sounds/Ambler.ogg', 'sounds/Ambler.wav']);
+//    this.load.audio('music', ['sounds/Ambler.ogg', 'sounds/Ambler.wav']);
     this.load.audio('correct', ['sounds/correct.ogg', 'sounds/correct.wav']);
     this.load.image('backdrop', 'assets/backdrop.jpg');
     this.load.image('blueglow','assets/blue_glow.png');
     this.load.image('bubble','assets/circle.png');
     this.load.image('heart', 'assets/heart.png');
-    this.load.image('happy', 'assets/happy.jpg');
-    this.load.image('fish', 'assets/fish.jpg');
+//    this.load.image('happy', 'assets/happy.jpg');
+//    this.load.image('fish', 'assets/fish.jpg');
     this.load.image('gameover', 'assets/gameover.png');
     this.load.image('play', 'assets/play.png');
     this.load.image('title', 'assets/title.png');
-    this.load.image('button', 'assets/blue_button02.png');
+//    this.load.image('button', 'assets/blue_button02.png');
+    this.load.image('timebar', 'assets/timebar.jpg')
     //this.load.audio('titleMusic', ['audio/main_menu.mp3']);
     //  + lots of other required assets here
 
@@ -66,7 +67,7 @@ BasicGame.Preloader.prototype = {
     //  If you don't have any music in your game then put the game.state.start line into the create function and delete
     //  the update function completely.
 
-    if (this.cache.isSoundDecoded('music') && this.ready == false)
+    if (this.cache.isSoundDecoded('mainmusic') && this.ready == false)
     {
       this.ready = true;
 //      this.state.start('Game');
