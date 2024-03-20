@@ -213,7 +213,7 @@ BasicGame.LevelManager = function(game) {
 
 BasicGame.LevelManager.prototype.startLevel = function(game) {
 //  this.timer = game.time.events.loop(Phaser.Timer.SECOND/2, game.createHitBox, game);
-  if(game.counter % 30 == 0) {
+  if(game.counter % 60 == 0) {
     game.createHitBox();
     game.counter = 0;
   }
@@ -454,7 +454,7 @@ BasicGame.Game.prototype = {
 //    if (this.time.fps !== 0) {
 //        this.fpsText.setText(this.time.fps);
 //    }
-    this.timerbar.width -= 0.4;
+    this.timerbar.width -= 0.1;
     if (this.timerbar.width <= 0.5) {
         this.gameOver();
     }
